@@ -1,0 +1,294 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id   String @id @default(cuid())
+  name String
+  password   String?
+  avatar     String?
+  isVerified Boolean @default(false)
+  role       Role    @default(USER)
+  jobs       Job[]
+  email         String    @unique
+  emailVerified DateTime?
+  skills     String[]
+  experience Experience[]
+  achivement  Achievement[]
+  certificate Certification[]
+  project    Project[]
+  education      Education[]
+  resume     String?
+  oauthProvider  OauthProvider? // Tracks OAuth provider (e.g., 'google')
+  oauthId        String?
+  createdAt      DateTime       @default(now())
+  blockedByAdmin DateTime?
+  onBoard        Boolean        @default(false)
+  bookmark       Bookmark[]
+  githubLink     String?
+  portfolioLink  String?
+  linkedinLink   String?
+  twitterLink    String?
+  discordLink    String?
+  contactEmail   String?
+  aboutMe        String?
+  resumeUpdateDate DateTime?
+  companyId      String?        
+  company        Company?
+  jobApplied     JobApplication[] 
+  notifications       Notification[]
+  conversations Conversation[] @relation("UserConversations")
+  messages      Message[]     
+
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  participants User[] @relation("UserConversations")
+  messages   Message[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  jobApplicationId Int
+  jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content        String
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}
+
+model Company {
+  id           String  @id @default(cuid())
+  companyName  String
+  companyLogo  String?
+  companyEmail String
+  companyBio   String
+  foundedYear             String
+  numberOfEmployees       String
+  CEOName                 String
+  companyType             String
+  city                    String
+  country                 String
+  website                 String?
+  linkedinLink   String?
+  twitterLink    String?
+  job          Job[]
+  userId       String    @unique  
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+}
+
+enum OauthProvider {
+  GOOGLE
+}
+
+model JobApplication {
+  id          Int         @id @default(autoincrement())
+  userId      String
+  jobId       String
+  status      Status
+  appliedAt   DateTime    @default(now())
+  answers     Json
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job         Job         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model VerificationToken {
+  token      String
+  identifier String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  type       TokenType
+
+  @@unique([token, identifier])
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  RESET_PASSWORD
+}
+
+model Job {
+  id                 String          @id @default(cuid())
+  userId             String
+  title              String
+  description        String
+  category           String
+  type               EmployementType
+  workMode           WorkMode        @map("work_mode")
+  currency           Currency        @default(USD)
+  application        String?
+  skills             String[]
+  expired            Boolean         @default(false)
+  hasExpiryDate      Boolean         @default(false) @map("has_expiry_date")
+  expiryDate         DateTime?
+  hasSalaryRange     Boolean         @default(false) @map("has_salary_range")
+  minSalary          Int?
+  maxSalary          Int?
+  hasExperiencerange Boolean         @default(false) @map("has_experience_range")
+  minExperience      Int?
+  maxExperience      Int?
+  isVerifiedJob      Boolean         @default(false) @map("is_verified_job")
+  deleted            Boolean         @default(false)
+  deletedAt          DateTime?
+  postedAt           DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  responsibilities   String[]
+  customQuestions     Json ?
+  rejectionMessage    String?
+  acceptanceMessage   String?
+  compnayId          String
+  company            Company          @relation(fields: [compnayId],references: [id])
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookmark           Bookmark[]
+  userApplied        JobApplication[]
+}
+
+model Bookmark {
+  id     String @id @default(uuid())
+  jobId  String
+  userId String
+  job    Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Experience {
+  id                Int             @id @default(autoincrement())
+  companyName       String
+  designation       String
+  EmploymentType    EmployementType
+  address           String
+  workMode          WorkMode
+  currentWorkStatus Boolean
+  startDate         DateTime
+  endDate           DateTime?
+  description       String
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id                Int             @id @default(autoincrement())
+  instituteName     String
+  degree            String
+  fieldOfStudy      String
+  description       String
+  grade             Int
+  startDate         DateTime
+  endDate           DateTime?
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id               Int          @id @default(autoincrement())
+  projectName      String
+  projectThumbnail String?
+  projectSummary   String
+  projectLiveLink  String?
+  userId           String
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isFeature        Boolean @default(false)
+}
+
+
+model Achievement {
+  id                Int             @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId       String
+  title       String
+  description String
+  date        DateTime?
+}
+
+model Certification {
+  id                Int             @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId       String
+  name        String
+  issuingOrganization String
+  issueDate   DateTime
+  expirationDate DateTime?
+  credentialId String?
+  credentialUrl String?
+}
+
+
+enum ProjectStack {
+  GO
+  PYTHON
+  MERN
+  NEXTJS
+  AI_GPT_APIS
+  SPRINGBOOT
+  OTHERS
+}
+
+enum Currency {
+  INR
+  USD
+}
+
+enum WorkMode {
+  remote
+  hybrid
+  office
+}
+
+enum Role {
+  USER
+  ADMIN
+  HR
+}
+
+enum Status {
+  Accepted
+  Rejected
+  Review
+}
+enum EmployementType {
+  Full_time
+  Part_time
+  Internship
+  Contract
+}
+enum NotificationType {
+  JOB_APPLICATION
+  APPLICATION_ACCEPTED
+  APPLICATION_REJECTED
+  NEW_MESSAGE
+}
+
+model Feedback {
+  id                 String   @id @default(cuid())
+  userType           Role
+  userId             String   
+  overallRating      Int     
+  feedbackResponses  Json     
+  additionalComments String?
+  createdAt          DateTime @default(now())
+}
+
+
