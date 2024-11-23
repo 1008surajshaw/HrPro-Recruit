@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { ScreeningQuestion } from "./CustomQuestions";
-import { useForm, SubmitHandler } from "react-hook-form";
 import {Plus} from "lucide-react"
 interface CustomQuestionForm {
   setScreeningQuestions: Dispatch<SetStateAction<ScreeningQuestion[]>>;

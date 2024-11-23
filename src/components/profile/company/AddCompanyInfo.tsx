@@ -1,28 +1,23 @@
 'use client'
-import { companySchema, CompanySchemaType } from '@/lib/validators/company.validator';
+import {  CompanySchemaType } from '@/lib/validators/company.validator';
 import React , { useCallback, useState,useRef } from 'react'
 import { useToast } from '@/components/ui/use-toast';
 import Image from 'next/image';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { CirclePlus} from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { FaFileUpload } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { uploadFileAction } from '@/actions/upload-to-cdn';
 import { X } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { UserType } from '@/types/user.types';
-import { submitImage } from '@/lib/utils';
 import { CompanyType } from '@/types/company.type';
 import { createCompanyDetails, editCompanyDetails } from '@/actions/user.profile.actions';
 
@@ -58,9 +53,7 @@ const AddCompanyInfo = ({
     const onDrop = useCallback((acceptedFiles: File[]) => {
       if (acceptedFiles[0].size < 1024 * 1024 * 5 && acceptedFiles[0].type.includes('image')) {
         setFile(acceptedFiles[0])
-        // console.log(file,"Comapny Logo")
         setPreviewImg(URL.createObjectURL(acceptedFiles[0]))
-        // console.log(previewImg,"previrew Imafe")
       } else {
         toast({
           variant: 'destructive',
@@ -69,13 +62,11 @@ const AddCompanyInfo = ({
       }
     }, [toast])
   
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
   
     const onSubmit = async (data: CompanySchemaType) => {
       try {
         if (file) {
           const logoUrl = await submitImage(file)
-          // console.log(logoUrl,"logo url is this")
           if (logoUrl) {
             data.companyLogo = logoUrl
           }
@@ -108,7 +99,6 @@ const AddCompanyInfo = ({
   
         handleFormClose()
       } catch (error) {
-        console.error('Error submitting form:', error)
         toast({
           title: 'Something went wrong while saving company details',
           description: 'Internal server error',

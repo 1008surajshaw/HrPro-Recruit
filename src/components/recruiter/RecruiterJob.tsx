@@ -1,6 +1,5 @@
 import React from 'react';
-import { getAllJobs, getAllRecruiterJobs } from '@/actions/job.action';
-import JobManagementTable from '../admin/JobManagementTable';
+import {  getAllRecruiterJobs } from '@/actions/job.action';
 import { JobQuerySchemaType } from '@/lib/validators/jobs.validator';
 import RecruiterJobManagementTable from './RecruiterJobManagementTable';
 

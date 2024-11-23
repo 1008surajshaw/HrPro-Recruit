@@ -42,7 +42,6 @@ export const signUp = withServerActionAsyncCatcher<
     PASSWORD_HASH_SALT_ROUNDS
   );
   
-  // console.log("call the function signup")
   try {
     await prisma.$transaction(
       async (txn) => {
@@ -97,7 +96,7 @@ export const signUp = withServerActionAsyncCatcher<
       'User registered successfully. A verification link has been sent to your email.',
       201
     ).serialize();
-  } catch (_err) {
+  } catch (_) {
     throw new ErrorHandler(
       'Registration Failed, please try again!',
       'INTERNAL_SERVER_ERROR'
@@ -196,7 +195,7 @@ export const verifyEmail = withServerActionAsyncCatcher<
   { token: string; resend?: boolean },
   ServerActionReturnType
 >(async ({ token, resend = false }) => {
-  let verificationToken = await prisma.verificationToken.findFirst({
+  const verificationToken = await prisma.verificationToken.findFirst({
     where: { token, type: 'EMAIL_VERIFICATION' },
   });
 

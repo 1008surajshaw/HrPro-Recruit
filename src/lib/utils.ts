@@ -57,6 +57,7 @@ export const submitImage = async (file: File | null) => {
     const uploadRes = res;
     return uploadRes.url;
   } catch (error) {
+    
     console.error('Image upload failed:', error);
   }
 };

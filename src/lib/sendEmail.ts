@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { ErrorHandler } from './error';
 
 export async function sendEmail(
   email: string,

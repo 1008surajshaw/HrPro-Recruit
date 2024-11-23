@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Button } from "@/components/ui/button"
 import { Loader2, Wand2 } from 'lucide-react'
@@ -8,7 +8,6 @@ import { Loader2, Wand2 } from 'lucide-react'
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
 import { improveText } from '@/actions/textgeneration.action';
-import { isArray } from 'lodash';
 
 interface DescriptionEditorProps {
   fieldName: string;
@@ -42,11 +41,7 @@ const DescriptionEditor: React.FC<DescriptionEditorProps> = ({
     return text.trim().split(/\s+/).filter(word => word.length > 0).length;
   };
 
-  // const truncateToWords = (text: string, limit: number) => {
-  //   const words = text.split(/\s+/);
-  //   if (words.length <= limit) return text;
-  //   return words.slice(0, limit).join(' ') + '...';
-  // };
+  
 
   const generateDescription = async () => {
     setIsGenerating(true);

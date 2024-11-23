@@ -17,7 +17,6 @@ const Page = async ({ params: { userId } }: { params: { userId: string } }) => {
 
   const isOwner = session?.user.id === userId;
   const isHR = session?.user.role === 'HR'
-  // console.log(session,"session data is thsi")
   let userDetails;
   const res = await getUserDetailsWithId(userId);
   if (res.status) {

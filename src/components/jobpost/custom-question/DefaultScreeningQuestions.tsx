@@ -1,9 +1,9 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { DefaultScreeningQuestions as questions } from "@/lib/constant/screening.constant";
 import { ScreeningQuestion } from "./CustomQuestions";
 
 interface DefaultScreeningQuestionsProps {
-  setScreeningQuestions: Dispatch<SetStateAction<ScreeningQuestion[]>>;
+  setScreeningQuestions: React.Dispatch<React.SetStateAction<ScreeningQuestion[]>>;
   screeningQuestions: ScreeningQuestion[];
 }
 

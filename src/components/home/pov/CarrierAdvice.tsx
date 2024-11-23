@@ -11,7 +11,6 @@ import Image from 'next/image'
 import greatProfile from '../../../../public/landingPage/greatProfile.png'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { authOptions } from '@/lib/authOptions'
 const CarrierAdvice = () => {
   const router = useRouter()
   const articles = [

@@ -38,9 +38,7 @@ export const Signin = () => {
 
   async function signinHandler(data: SigninSchemaType) {
     try {
-      // console.log(data,"signin data")
       const response = await signIn('signin', { ...data, redirect: false });
-      // console.log(response)
       if (!response?.ok) {
         const errorMessage =
           response?.error?.includes('User') && response?.error?.includes('does not exist')

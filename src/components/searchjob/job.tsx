@@ -4,7 +4,7 @@ import Icon from '@/components/ui/icon';
 import { formatSalary } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { Briefcase, MapPin, Globe, Building2, Calendar, LinkedinIcon, Twitter } from 'lucide-react';
+import { Briefcase, MapPin, Globe, Building2, LinkedinIcon, Twitter } from 'lucide-react';
 import Link from 'next/link';
 import Linkify from 'linkify-react';
 import { ShareJobDialog } from './ShareJobDialog';

@@ -14,7 +14,7 @@ export function withNonUserServerAction<T, R>(
 ): (args?: T) => Promise<R> {
   return withServerActionAsyncCatcher(async (args?: T) => {
     const session = await getServerSession(options);
-    if (!session || session.user.role == 'USER'  ) {
+    if (!session || session.user.role === 'USER'  ) {
       throw new ErrorHandler(
         'You must be authenticated to access this resource.',
         'UNAUTHORIZED'

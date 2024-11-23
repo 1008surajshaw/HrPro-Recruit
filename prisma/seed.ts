@@ -38,12 +38,10 @@ import {
               emailVerified: new Date(),
             },
           });
-          console.log(`User created or updated: ${u.email}`);
         } catch (error) {
           console.log(`Error processing user ${u.email}:`, error);
         }
       }
-      console.log('✅ User seed completed');
     } catch (error) {
       console.error('Error seeding users:', error);
     }

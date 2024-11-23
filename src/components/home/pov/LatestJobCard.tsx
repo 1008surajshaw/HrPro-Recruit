@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 
@@ -16,7 +17,7 @@ const LatestJobCard:React.FC<JobCardProps> = ({ title, salary, company, location
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
-          {icon && <img src={icon} alt={`${title} icon`} className="w-10 h-10" />}
+          {icon && <Image src={icon} alt={`${title} icon`} className="w-10 h-10" />}
           <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
         </div>
         {isHot && (

@@ -4,7 +4,7 @@ import prisma from '@/config/prisma.config';
 import { authOptions } from '@/lib/authOptions';
 import { ErrorHandler } from '@/lib/error';
 import { SuccessResponse } from '@/lib/success';
-import { CompleteConversationResponse, ReturnTypeConversation } from '@/types/jobs.types';
+import {  ReturnTypeConversation } from '@/types/jobs.types';
 import { UserConversationResponse } from '@/types/message.type';
 import { getServerSession } from 'next-auth';
 

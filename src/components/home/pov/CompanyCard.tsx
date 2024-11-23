@@ -1,5 +1,4 @@
 import React from 'react';
-import { AiFillHighlight } from "react-icons/ai";
 
 // Define the interface for company data
 export interface CompanyCardProps {

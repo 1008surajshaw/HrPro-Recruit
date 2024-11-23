@@ -141,7 +141,7 @@ export default function FeedbackPage({ userType = "USER",userId }: { userType?:R
     };
 
     try {
-      //@ts-ignore
+      //@ts-ignore-error
       const response = await saveUserResponse(feedbackData);
       toast({
         variant: "success",

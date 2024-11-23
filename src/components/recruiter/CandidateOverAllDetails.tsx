@@ -124,7 +124,6 @@ const rejectionMessage = jobDetail.rejectionMessage
         throw new Error(result.message)
       }
     } catch (error) {
-      console.error('Error updating status:', error)
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to update candidate status",

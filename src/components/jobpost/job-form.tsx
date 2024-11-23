@@ -20,7 +20,6 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useForm  } from 'react-hook-form';
 import {
-  JobPostSchema,
   JobPostSchemaType,
 } from '@/lib/validators/jobs.validator';
 import { Button } from '@/components/ui/button';
@@ -30,7 +29,7 @@ import {
   Calendar as CalendarIcon,
   LucideRocket,
   MailOpenIcon,
-  X,
+  
 } from 'lucide-react';
 import DescriptionEditor from './DescriptionEditor';
 import { Switch } from '@/components/ui/switch';
@@ -104,7 +103,7 @@ const [customMessage,setCustomMessages] = useState<boolean>(false)
   
  
 
-  const handleDescriptionChange = (fieldName: any, value: String) => {
+  const handleDescriptionChange = (fieldName: any, value: string) => {
     form.setValue(fieldName, value);
   };
 
@@ -118,7 +117,6 @@ const [customMessage,setCustomMessages] = useState<boolean>(false)
 
   
   const onSubmit = async (data: JobPostSchemaType) => {
-    // console.log('Form submitted with data:', data);
     
     try {
       // Validate companyId
@@ -141,10 +139,8 @@ const [customMessage,setCustomMessages] = useState<boolean>(false)
         expiryDate: data.hasExpiryDate ? data.expiryDate : undefined,
       };
 
-      // console.log('Sending formatted data:', formattedData);
 
       const response = await createJob(formattedData);
-      // console.log('Server response:', response);
       
       if (response && !response.status ) {
         toast({
@@ -210,7 +206,7 @@ const [customMessage,setCustomMessages] = useState<boolean>(false)
     setIsGenerating(true)
     try {
       const title = form.getValues('title')
-      let prompt = title || await askForPrompt()
+      const prompt = title || await askForPrompt()
       if (!prompt) {
         setIsGenerating(false)
         return

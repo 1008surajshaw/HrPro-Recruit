@@ -22,13 +22,13 @@ import {
   PackageSearch,
   Pen,
   Users,
-  X,
+  
 } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { CompanyLogo } from './header';
-import { ADMIN_ROLE, HR_ROLE, USER_ROLE } from '@/config/app.config';
+import { ADMIN_ROLE, HR_ROLE } from '@/config/app.config';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getNameInitials } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';

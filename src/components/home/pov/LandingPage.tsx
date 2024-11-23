@@ -2,12 +2,10 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { useTheme } from 'next-themes'
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 
 export default function LandingPage() {
-  const { theme } = useTheme()
   const router = useRouter()
 
   return (

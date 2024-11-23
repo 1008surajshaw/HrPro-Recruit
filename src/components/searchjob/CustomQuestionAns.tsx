@@ -60,7 +60,7 @@ export default function CustomQuestionAns({ jobData }: { jobData: JobType }) {
       const result = await submitJobApplication(formData, jobId , jobData.title , jobData.company.companyName);
       setLoading(false);
 
-      if (result.success) {
+      if (result) {
         toast({
           title: "Job Application sent successfully",
           variant: 'success'

@@ -432,7 +432,7 @@ export const updateUserDetails = withSession<
   ServerActionReturnType<any>
 >(async (session, userData) => {
   if (!session || !session?.user?.id) {
-    throw new ErrorHandler('Not Authrised', 'UNAUTHORIZED');
+    throw new ErrorHandler('Not Authorized', 'UNAUTHORIZED');
   }
   const { success, data } = profileSchema.safeParse(userData);
   if (!success) {
@@ -584,7 +584,7 @@ ServerActionReturnType>(async ({data,id}) =>{
       'Company Details updated successfully',
       200
     ).serialize();
-  }catch(error){
+  }catch(_){
     return new ErrorHandler('Internal server error', 'DATABASE_ERROR');
   }
 
@@ -598,7 +598,6 @@ ServerActionReturnType>(async (data) =>{
   if (!auth || !auth?.user?.id)
     throw new ErrorHandler('Not Authorized', 'UNAUTHORIZED');
 
-  //  console.log(data,"complete details")
   try{
      await prisma.company.create({
       
@@ -614,7 +613,7 @@ ServerActionReturnType>(async (data) =>{
       'Company Details updated successfully',
       200
     ).serialize();
-  }catch(error){
+  }catch(_){
     return new ErrorHandler('Internal server error', 'DATABASE_ERROR');
   }
 
@@ -643,7 +642,7 @@ export const editExperience = withServerActionAsyncCatcher<
       'Experience updated successfully',
       200
     ).serialize();
-  } catch (_error) {
+  } catch (_) {
     return new ErrorHandler('Internal server error', 'DATABASE_ERROR');
   }
 });

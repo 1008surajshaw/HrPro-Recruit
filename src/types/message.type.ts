@@ -1,23 +1,4 @@
 
-
- type User = {
-    id: string;
-    name: string | null;
-    avatar: string | null;
-  };
-  type company ={
-    companyName:string;
-    companyLogo:string | null;
-  }
-   type Job = {
-    id: string;
-    title: string;
-    company: {
-      companyName:string;
-      companyLogo:string | null;
-    };
-  };
-  
   export type UserConversationResponse = {
     id: string;
     otherUsers: {

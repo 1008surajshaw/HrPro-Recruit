@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { SquareArrowOutUpRightIcon } from 'lucide-react';
+import Image from 'next/image';
 
 export function UserProjects() {
   const { toast } = useToast();
@@ -59,7 +60,7 @@ export function UserProjects() {
         >
           <div className="flex items-center justify-center aspect-video w-full h-[200px] overflow-hidden object-contain rounded-2xl p-1 mt-1">
             {item.projectThumbnail ? (
-              <img
+              <Image
                 alt={item.projectName}
                 src={item.projectThumbnail}
                 className={`h-[200px] hover:scale-110 transition-transform duration-300`}

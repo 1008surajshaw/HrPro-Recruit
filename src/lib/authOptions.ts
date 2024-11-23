@@ -35,7 +35,6 @@ export const authOptions = {
             }
           );
         }
-        // console.log("come here")
         const { email, password } = result.data;
         const user = await prisma.user.findUnique({
           where: {
@@ -53,7 +52,6 @@ export const authOptions = {
           },
         });
 
-        // console.log(user,"user info")
 
         if (!user || !user.password)
           throw new ErrorHandler(
@@ -113,7 +111,6 @@ export const authOptions = {
 
     async jwt(jwtProps) {
       const { token, user, trigger, session } = jwtProps;
-      // console.log( session  ,"come to jwt")
       if (trigger === 'update') {
         return {
           ...token,

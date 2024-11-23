@@ -31,7 +31,6 @@ import {
   getCompleteJobDetails,
   getJobType,
 } from '@/types/jobs.types';
-import { withAdminServerAction } from '@/lib/admin';
 import { revalidatePath } from 'next/cache';
 import { Status } from '@prisma/client';
 import { withNonUserServerAction } from '@/lib/recruiter';
@@ -449,7 +448,7 @@ export const getRecentJobs = async () => {
     return new SuccessResponse('Recently added jobs fetch successfully', 200, {
       recentJobs,
     }).serialize();
-  } catch (_error) {
+  } catch (_) {
     return new ErrorHandler('Internal server error', 'DATABASE_ERROR');
   }
 };
@@ -789,7 +788,6 @@ export async function submitJobApplication(formData: FormData,jobId:string ,role
       return jobApplication;
      
   } catch (error) {
-    console.error('Error submitting job application:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to submit job application',
@@ -823,7 +821,6 @@ async function handleBackgroundMails(
       },
     })
 
-    // console.log(`Background tasks completed for application `)
   } catch (error) {
     console.error(`Error in background tasks for application :`, error)
   }
@@ -1125,11 +1122,8 @@ async function handleBackgroundTasks(
         },
       });
 
-      // console.log(`Message sent to ${userId} in conversation ${conversation.id}`);
     }
 
-
-    // console.log(`Background tasks completed for application ${applicationId}`)
   } catch (error) {
     console.error(`Error in background tasks for application ${applicationId}:`, error)
   }
@@ -1141,7 +1135,7 @@ export async function getAllApplication() {
     const auth = await getServerSession(authOptions);
     
     if (!auth || !auth?.user?.id)
-      throw new ErrorHandler('Not Authrised', 'UNAUTHORIZED');
+      throw new ErrorHandler('Not Authorized', 'UNAUTHORIZED');
 
     const res = await prisma.jobApplication.findMany({
       where:{

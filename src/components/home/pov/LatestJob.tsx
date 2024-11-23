@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { MapPin, Building2, Clock } from 'lucide-react'
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 
 export default function LatestJobs() {
@@ -74,7 +75,7 @@ export default function LatestJobs() {
           {jobs.map((job, index) => (
             <Card key={index} className="flex flex-col overflow-hidden border border-gray-200 p-4 dark:border-gray-800" onClick={()=>router.push('/jobs')}>
               <div className="flex items-start gap-4">
-                <img
+                <Image
                   alt={`${job.company} logo`}
                   className="rounded-lg border border-gray-200 bg-white dark:border-gray-800"
                   height="40"

@@ -16,10 +16,8 @@ const page = async() => {
   let userDetails;
   if(userId){
     const res = await getUserDetailsWithId(userId);
-    console.log(res,"resonse")
     if (res.status) {
       userDetails = res.additional;
-      console.log(userDetails.company,"comapny detilsa")
     }
   }
 

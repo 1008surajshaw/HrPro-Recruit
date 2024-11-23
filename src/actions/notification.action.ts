@@ -19,7 +19,7 @@ export async function createNotification( userId:string, type:NotificationType, 
        })
 
        return new SuccessResponse(`Notification send Successfully`,200)
-    }catch(error){
+    }catch(_){
         return new ErrorHandler('Internal server error', 'DATABASE_ERROR');
     }
 }
@@ -45,7 +45,7 @@ export async function getNotification(userId:string){
       return new SuccessResponse('Recently Notification fetch successfully', 200, {
         recentNotification,
       }).serialize();
-    }catch(_error){
+    }catch(_){
         return new ErrorHandler('Internal server error', 'DATABASE_ERROR');
     }
 }

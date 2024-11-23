@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import Image from "next/image"
 
 export default function TopCompanies() {
   const companies = [
@@ -46,7 +47,7 @@ export default function TopCompanies() {
               key={index}
               className="flex flex-col items-center p-6 text-center hover:shadow-lg transition-shadow"
             >
-              <img
+              <Image
                 alt={`${company.name} logo`}
                 className="mb-4 rounded-lg"
                 height="60"

@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import { bearerToken } from '@/config/skillapi.auth.token';
 
-var cron = require('node-cron');
+let cron = require('node-cron');
 
 const url = 'https://auth.emsicloud.com/connect/token';
 

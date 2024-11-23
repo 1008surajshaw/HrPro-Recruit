@@ -2,19 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { SquareUserRound, Pencil } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import ProfileEmptyContainers from "../emptycontainers/ProfileEmptyContainers";
-import {
-  FaBuilding,
-  FaBriefcase,
-  FaEnvelope,
-  FaGlobe,
-  FaLinkedin,
-  FaTwitter,
-} from "react-icons/fa";
-import { BsFillPeopleFill } from "react-icons/bs";
-import { MdOutlineLocationOn } from "react-icons/md";
-import { Circle, Building2, Plus } from "lucide-react";
+import React, {  useState } from "react";
 import { SHEETS } from "@/lib/constant/profile.constant";
 import SheetWrapper from "../sheets/SheetWrapper";
 import AddCompanyInfo from "./AddCompanyInfo";
@@ -31,14 +19,12 @@ const CompanyInfo = ({
   company: CompanyType | null;
 }) => {
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
-  const { status, data } = useSession();
 
   const handleClose = () => {
     setIsSheetOpen(false);
   };
 
   const handleOpen = () => {
-    // console.log(isSheetOpen ,"called")
     setIsSheetOpen(true);
   };
 

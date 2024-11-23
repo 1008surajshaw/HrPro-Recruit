@@ -1,5 +1,6 @@
 import { TokenType } from '@prisma/client';
 import nodemailer from 'nodemailer';
+import { ErrorHandler } from './error';
 
 export async function sendConfirmationEmail(
   email: string,
@@ -37,7 +38,7 @@ export async function sendConfirmationEmail(
 
       await transporter.sendMail(mailOptions);
     }
-  } catch (error) {
-    console.error('Error sending email:', error);
+  } catch (_) {
+    return new ErrorHandler('Internal server error', 'DATABASE_ERROR');
   }
 }
