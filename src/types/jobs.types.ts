@@ -113,52 +113,57 @@ export type getCompleteJobDetails = {
 
 
 export type CompleteConversationResponse = {
-  id: string
-  messages: {
+  status: boolean; 
+  code: number; 
+  message: string; 
+  additional:{
     id: string
-    content: string
-    createdAt: Date
-    isRead: boolean
-    senderId:string
-  }[]
-  jobApplication: {
-    answers: unknown
-    status: string
-    appliedAt: Date
-    job: {
-      id: string;
-      title: string;
-      description: string;
-      type: EmployementType;
-      category: string;
-      workMode: WorkMode;
-      currency: Currency;
-      skills: string[];
-      expired: boolean;
-      hasExpiryDate: boolean;
-      expiryDate?: Date | null;
-      hasSalaryRange: boolean;
-      minSalary?: number | null;
-      maxSalary?: number | null;
-      hasExperiencerange: boolean;
-      minExperience?: number | null;
-      maxExperience?: number | null;
-      isVerifiedJob: boolean;
-      deleted: boolean;
-      deletedAt?: Date | null;
-      postedAt: Date;
-      updatedAt: Date;
-      responsibilities: string[];
-      company: CompanyType
+    jobApplication: {
+      answers: JsonValue
+      status: Status
+      appliedAt: Date
+      job: {
+        id: string;
+        title: string;
+        description: string;
+        type: EmployementType;
+        category: string;
+        workMode: WorkMode;
+        currency: Currency;
+        skills: string[];
+        expired: boolean;
+        hasExpiryDate: boolean;
+        expiryDate?: Date | null;
+        hasSalaryRange: boolean;
+        minSalary?: number | null;
+        maxSalary?: number | null;
+        hasExperiencerange: boolean;
+        minExperience?: number | null;
+        maxExperience?: number | null;
+        isVerifiedJob: boolean;
+        deleted: boolean;
+        deletedAt?: Date | null;
+        postedAt: Date;
+        updatedAt: Date;
+        responsibilities: string[];
+        company: CompanyType
+      }
     }
   }
 } 
+
 
 export type ReturnTypeConversation ={
   status: boolean; 
   code: number; 
   message: string; 
-  additional:CompleteConversationResponse
+  additional: {
+    id:string
+    content: string
+    createdAt: Date
+    isRead: boolean
+    senderId:string
+  }[]
 }
 
 export type AppliedJob = {

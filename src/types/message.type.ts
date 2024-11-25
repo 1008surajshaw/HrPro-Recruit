@@ -14,6 +14,7 @@
         isRead: boolean;
     } | null;
     jobApplication?: {
+        id:number
         job: {
             id: string;
             title: string;

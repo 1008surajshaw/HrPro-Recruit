@@ -37,6 +37,7 @@ import { withNonUserServerAction } from '@/lib/recruiter';
 import { sendEmail } from '@/lib/sendEmail';
 import ApplicationConfirmationEmail from '@/mailtemplate/ApplicationConfirmationEmail';
 import NotificationUpdate from '@/mailtemplate/NotificationUpdate';
+import { GetAllApplicationResponse } from '@/types/application.type';
 
 type additional = {
   isVerifiedJob: boolean;
@@ -1130,23 +1131,26 @@ async function handleBackgroundTasks(
 }
 
 
-export async function getAllApplication() {
-  try{
-    const auth = await getServerSession(authOptions);
-    
-    if (!auth || !auth?.user?.id)
-      throw new ErrorHandler('Not Authorized', 'UNAUTHORIZED');
 
+export async function getAllApplication(): Promise<GetAllApplicationResponse | undefined> {
+  const auth = await getServerSession(authOptions);
+    
+  if (!auth || !auth?.user?.id) {
+    throw new ErrorHandler('Not Authrised', 'UNAUTHORIZED');
+
+  }
+
+  try {
     const res = await prisma.jobApplication.findMany({
-      where:{
-        userId:auth.user.id
+      where: {
+        userId: auth.user.id
       },
-      select:{
-        status:true,
-        appliedAt:true,
-        answers:true,
-        job:{
-          select:{
+      select: {
+        status: true,
+        appliedAt: true,
+        answers: true,
+        job: {
+          select: {
             title: true,
             description: true,
             type: true,
@@ -1169,9 +1173,9 @@ export async function getAllApplication() {
             deletedAt: true,
             postedAt: true,
             updatedAt: true,
-            responsibilities:true,
-            company:{
-              select:{
+            responsibilities: true,
+            company: {
+              select: {
                 companyName: true,
                 companyLogo: true,
                 companyEmail: true,
@@ -1190,15 +1194,14 @@ export async function getAllApplication() {
           }
         }
       }
-    })
+    });
 
     return {
-      status:200,
-      result:res
-    }
-  }catch(error){
-     console.log(error)
+      status: 200,
+      result: res
+    };
+  } catch (error) {
+    console.error(error);
+    
   }
 }
-
-

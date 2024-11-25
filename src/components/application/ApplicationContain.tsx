@@ -1,16 +1,15 @@
-import { getAllApplication } from '@/actions/job.action'
-import React from 'react'
-import CompleteApplication from './CompleteApplication'
-import { redirect } from 'next/navigation'
+import React from 'react';
+import CompleteApplication from './CompleteApplication';
+import { GetAllApplicationResponse } from '@/types/application.type';
 
-const ApplicationContain = async () => {
-    const appliedJobs = await getAllApplication()
-
-    if (appliedJobs?.status !== 200) {
-      redirect('/')
-    }
+const ApplicationContain = ({ initialData }: { initialData: GetAllApplicationResponse }) => {
+  if (initialData.status !== 200) {
+    // You might want to handle this error case differently
+    return <div>Error loading applications</div>;
+  }
   
-    return <CompleteApplication appliedJobs={appliedJobs} />
-}
+  return <CompleteApplication appliedJobs={initialData} />;
+};
 
-export default ApplicationContain
+export default ApplicationContain;
+

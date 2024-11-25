@@ -1,41 +1,148 @@
-'use client'
-
+import { useEffect, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MessageCircle, Briefcase, Building2, CalendarDays } from 'lucide-react'
-import { useEffect, useState } from "react"
-import MessageSection from "./MessageSection"
-import { getCompleteConversationById } from "@/actions/message.action"
-import { CompleteConversationResponse } from "@/types/jobs.types"
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import MessageSection from "./MessageSection"
+import { getCompleteConversationById,getResponseWithCompanyDetails } from "@/actions/message.action"
 import { LoadingSpinner } from "../loading-spinner"
+import MeetingScheduler from "./MeetingScheduler"
+import { useSession } from "next-auth/react"
 
+type ConversationItem = {
+  id: string;
+  content: string;
+  createdAt: Date;
+  isRead: boolean;
+  senderId: string;
+};
 
-const UserCompleteConversation = ({ conversationId, isHR }: { conversationId: string, isHR: boolean }) => {
-    const [conversation, setConversation] = useState<CompleteConversationResponse>()
-    const [isLoading, setIsLoading] = useState(true)
+type JobDetails = {
+  title: string;
+  description: string;
+  skills: string[];
+  responsibilities: string[];
+};
+
+type CompanyDetails = {
+  companyName: string;
+  companyBio: string;
+  foundedYear: string;
+  numberOfEmployees: string;
+  city: string;
+  country: string;
+  companyType: string;
+};
+
+type otherUser ={
+    id: string;
+    name: string;
+    avatar: string | null;
+} | null
+
+type jobApplications = {
+  id:number
+  job: {
+      id: string;
+      title: string;
+      company: {
+          companyName: string;
+          companyLogo: string | null;
+      };
+  };
+} | undefined
+
+const UserCompleteConversation = ({ conversationId, isHR,otherUsers,jobApplication  }: { conversationId: string; isHR: boolean ;otherUsers:otherUser,jobApplication:jobApplications}) => {
+  const session = useSession();
+  const recId  = session.data?.user.id
   
-    useEffect(() => {
-      const fetchConversation = async () => {
-        setIsLoading(true)
-        try {
-          const response = await getCompleteConversationById(conversationId)
-          if (response?.status) {
-            setConversation(response.additional)
-          }
-        } catch (error) {
-          console.error('Error fetching conversation:', error)
-        } finally {
-          setIsLoading(false)
+  const [activeTab, setActiveTab] = useState("messages")
+  const [conversation, setConversation] = useState<ConversationItem[]>()
+  const [jobDetails, setJobDetails] = useState<JobDetails>()
+  const [companyDetails, setCompanyDetails] = useState<CompanyDetails>()
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasLoadedJob, setHasLoadedJob] = useState(false)
+  const [hasLoadedCompany, setHasLoadedCompany] = useState(false)
+
+  // Only fetch messages initially
+  useEffect(() => {
+    const fetchMessages = async () => {
+      setIsLoading(true)
+      try {
+        const response = await getCompleteConversationById(conversationId)
+        // console.log(response,'response')
+        if (response?.status) {
+          setConversation(response.additional)
         }
+      } catch (error) {
+        console.error('Error fetching messages:', error)
+      } finally {
+        setIsLoading(false)
       }
-  
-      fetchConversation()
-    }, [conversationId])
+    }
+
+    fetchMessages()
+  }, [conversationId])
+
+  // Fetch job and company details only when their tabs are clicked
+  const handleTabChange = async (tab: string) => {
+    setActiveTab(tab)
+
+    // If job tab is clicked and job details haven't been loaded yet
+    if (tab === "job" && !hasLoadedJob) {
+      setIsLoading(true)
+      try {
+        const response = await getResponseWithCompanyDetails(conversationId)
+        if (response?.status) {
+          const { job } = response.additional.jobApplication
+          setJobDetails({
+            title: job.title,
+            description: job.description,
+            skills: job.skills,
+            responsibilities: job.responsibilities
+          })
+          setHasLoadedJob(true)
+        }
+      } catch (error) {
+        console.error('Error fetching job details:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    // If company tab is clicked and company details haven't been loaded yet
+    if (tab === "company" && !hasLoadedCompany && !isHR) {
+      setIsLoading(true)
+      try {
+        const response = await getResponseWithCompanyDetails(conversationId)
+        if (response?.status) {
+          const { company } = response.additional.jobApplication.job
+          setCompanyDetails({
+            companyName: company.companyName,
+            companyBio: company.companyBio,
+            foundedYear: company.foundedYear,
+            numberOfEmployees: company.numberOfEmployees  ,
+            city: company.city,
+            country: company.country,
+            companyType: company.companyType
+          })
+          setHasLoadedCompany(true)
+        }
+      } catch (error) {
+        console.error('Error fetching company details:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+  }
 
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col">
-      <Tabs defaultValue="messages" className="flex-1 flex flex-col">
+      <Tabs 
+        defaultValue="messages" 
+        className="flex-1 flex flex-col"
+        value={activeTab}
+        onValueChange={handleTabChange}
+      >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="messages" className="flex items-center gap-2">
             <MessageCircle className="h-4 w-4" />
@@ -61,13 +168,13 @@ const UserCompleteConversation = ({ conversationId, isHR }: { conversationId: st
         </TabsList>
 
         <TabsContent value="messages" className="flex-1 mt-0 overflow-hidden">
-          {isLoading ? (
+          {isLoading && activeTab === "messages" ? (
             <div className="flex items-center justify-center h-full">
               <LoadingSpinner />
             </div>
           ) : conversation ? (
             <MessageSection 
-              messages={conversation.messages} 
+              messages={conversation} 
               conversationId={conversationId}
               isHR={isHR}
             />
@@ -77,15 +184,18 @@ const UserCompleteConversation = ({ conversationId, isHR }: { conversationId: st
         </TabsContent>
 
         <TabsContent value="job" className="mt-0">
-          {!isLoading && conversation?.jobApplication.job && (
+          {isLoading && activeTab === "job" ? (
+            <div className="flex items-center justify-center h-full">
+              <LoadingSpinner />
+            </div>
+          ) : jobDetails ? (
             <div className="p-4 space-y-4">
-              <h2 className="text-2xl font-bold">{conversation.jobApplication.job.title}</h2>
-              <p className="text-muted-foreground">{conversation.jobApplication.job.description}</p>
-              
+              <h2 className="text-2xl font-bold">{jobDetails.title}</h2>
+              <p className="text-muted-foreground">{jobDetails.description}</p>
               <div className="space-y-2">
                 <h3 className="font-semibold">Skills Required</h3>
                 <div className="flex flex-wrap gap-2">
-                  {conversation.jobApplication.job.skills.map((skill, index) => (
+                  {jobDetails.skills.map((skill, index) => (
                     <span key={index} className="px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-sm">
                       {skill}
                     </span>
@@ -96,63 +206,66 @@ const UserCompleteConversation = ({ conversationId, isHR }: { conversationId: st
               <div className="space-y-2">
                 <h3 className="font-semibold">Responsibilities</h3>
                 <ul className="list-disc list-inside space-y-1">
-                  {conversation.jobApplication.job.responsibilities.map((responsibility, index) => (
+                  {jobDetails.responsibilities.map((responsibility, index) => (
                     <li key={index} className="text-muted-foreground">{responsibility}</li>
                   ))}
                 </ul>
               </div>
             </div>
+          ) : (
+            <p>No job details found.</p>
           )}
         </TabsContent>
 
         <TabsContent value={isHR ? "meeting" : "company"} className="mt-0">
-          {!isLoading && conversation?.jobApplication.job.company && (
+          {isLoading && activeTab === "company" ? (
+            <div className="flex items-center justify-center h-full">
+              <LoadingSpinner />
+            </div>
+          ) : !isHR && companyDetails ? (
             <div className="p-4 space-y-4">
-              {isHR ? (
-                <div>Meeting scheduler component will go here</div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                        {
-                            conversation.jobApplication.job.company.companyLogo && (
-                            <Avatar>
-                            <AvatarImage src={conversation.jobApplication.job.company.companyLogo}  />
-                            <AvatarFallback>CN</AvatarFallback>
-                            </Avatar>
-                            )
-                        }
-                    <div>
-                      <h2 className="text-2xl font-bold">{conversation.jobApplication.job.company.companyName}</h2>
-                      <p className="text-muted-foreground">{conversation.jobApplication.job.company.companyBio}</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="font-semibold">Founded</h3>
-                      <p className="text-muted-foreground">{conversation.jobApplication.job.company.foundedYear}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">Company Size</h3>
-                      <p className="text-muted-foreground">{conversation.jobApplication.job.company.numberOfEmployees} employees</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">Location</h3>
-                      <p className="text-muted-foreground">{conversation.jobApplication.job.company.city}, {conversation.jobApplication.job.company.country}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">Company Type</h3>
-                      <p className="text-muted-foreground">{conversation.jobApplication.job.company.companyType}</p>
-                    </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  
+                  <div>
+                    <h2 className="text-2xl font-bold">{companyDetails.companyName}</h2>
+                    <p className="text-muted-foreground">{companyDetails.companyBio}</p>
                   </div>
                 </div>
-              )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="font-semibold">Founded</h3>
+                    <p className="text-muted-foreground">{companyDetails.foundedYear}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Company Size</h3>
+                    <p className="text-muted-foreground">{companyDetails.numberOfEmployees} employees</p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Location</h3>
+                    <p className="text-muted-foreground">{companyDetails.city}, {companyDetails.country}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Company Type</h3>
+                    <p className="text-muted-foreground">{companyDetails.companyType}</p>
+                  </div>
+                </div>
+              </div>
             </div>
+          ) : isHR && recId && otherUsers?.id && jobApplication?.id  ? (
+            <MeetingScheduler 
+              recruiterId={recId}
+              candidateId={otherUsers?.id}
+              jobApplicationId={jobApplication?.id}
+          />
+          ) : (
+            <p>No company details found.</p>
           )}
         </TabsContent>
       </Tabs>
     </div>
-  )
-}
+  );
+};
 
-export default UserCompleteConversation
+export default UserCompleteConversation;

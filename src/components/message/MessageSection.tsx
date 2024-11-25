@@ -1,5 +1,6 @@
 'use client'
 
+import { addMessageToConversation } from "@/actions/message.action"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,11 +18,21 @@ interface Message {
   senderId: string
 }
 
-export default function MessageSection({ messages, conversationId, isHR }: { messages: Message[], conversationId: string, isHR: boolean }) {
+export default function MessageSection({ messages: initialMessages, conversationId, isHR }: { 
+  messages: Message[], 
+  conversationId: string, 
+  isHR: boolean 
+}) {
   const { data: session } = useSession()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [newMessage, setNewMessage] = useState("")
   const [isSending, setIsSending] = useState(false)
+  const [messages, setMessages] = useState<Message[]>(initialMessages)
+  const id = session?.user?.id
+
+  if (!id) {
+    return null
+  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -31,31 +42,54 @@ export default function MessageSection({ messages, conversationId, isHR }: { mes
     scrollToBottom()
   }, [messages])
 
+  // Update local messages when prop changes
+  useEffect(() => {
+    setMessages(initialMessages)
+  }, [initialMessages])
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newMessage.trim()) return
 
     setIsSending(true)
-    try {
-      const response = await fetch('/api/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          conversationId,
-          content: newMessage,
-          isHR,
-        }),
-      })
+    
+    // Create a temporary message to show immediately
+    const tempMessage: Message = {
+      id: Date.now().toString(), // temporary ID
+      content: newMessage,
+      createdAt: new Date(),
+      isRead: false,
+      senderId: id
+    }
 
-      if (response.ok) {
-        setNewMessage("")
-        // You might want to refresh the messages here or update the local state
+    // Update UI immediately
+    setMessages(prevMessages => [...prevMessages, tempMessage])
+    setNewMessage("")
+    scrollToBottom()
+
+    try {
+      const response = await addMessageToConversation(conversationId, id, newMessage)
+
+      if (response) {
+        // If the response includes the actual message, update it
+          setMessages(prevMessages => 
+            prevMessages.map(msg => 
+              msg.id === tempMessage.id ? response : msg
+            )
+          )
+        
       } else {
+        // If sending failed, remove the temporary message
+        setMessages(prevMessages => 
+          prevMessages.filter(msg => msg.id !== tempMessage.id)
+        )
         console.error('Failed to send message')
       }
     } catch (error) {
+      // If there's an error, remove the temporary message
+      setMessages(prevMessages => 
+        prevMessages.filter(msg => msg.id !== tempMessage.id)
+      )
       console.error('Error sending message:', error)
     } finally {
       setIsSending(false)

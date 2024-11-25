@@ -16,14 +16,18 @@ const page = async () => {
     const conversations = await getAllConversation();
     
     if (!conversations || conversations.length === 0) {
-        return <h1>No conversations found or an internal error occurred</h1>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <h1 className="text-xl font-semibold text-muted-foreground">No conversations found or an internal error occurred</h1>
+            </div>
+        );
     }
 
     return (
-        <div className='w-10/12 flex mx-auto justify-center '>
+        <div className='w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-screen'>
+            <h2 className='py-8 text-2xl font-bold'>Ongoing Conversations</h2>
             <div className="space-y-4">
-            <h2 className='py-8'>Ongoing</h2>
-                {conversations.map((conversation:UserConversationResponse) => (
+                {conversations.map((conversation: UserConversationResponse) => (
                     <ConversationCard 
                         key={conversation.id} 
                         conversation={conversation} 
@@ -36,3 +40,4 @@ const page = async () => {
 };
 
 export default page;
+

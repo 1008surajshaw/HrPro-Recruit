@@ -4,7 +4,7 @@ import prisma from '@/config/prisma.config';
 import { authOptions } from '@/lib/authOptions';
 import { ErrorHandler } from '@/lib/error';
 import { SuccessResponse } from '@/lib/success';
-import {  ReturnTypeConversation } from '@/types/jobs.types';
+import {  CompleteConversationResponse, ReturnTypeConversation } from '@/types/jobs.types';
 import { UserConversationResponse } from '@/types/message.type';
 import { getServerSession } from 'next-auth';
 
@@ -39,6 +39,7 @@ export const getAllConversation = async (): Promise<UserConversationResponse[]> 
             },
             jobApplication: {
                 select: {
+                    id:true,
                     job: {
                         select: {
                             id: true,
@@ -57,7 +58,7 @@ export const getAllConversation = async (): Promise<UserConversationResponse[]> 
         orderBy: {
             updatedAt: 'desc',
         },
-        take: 8,
+        
     });
 
     // Map the results to format the response
@@ -86,6 +87,7 @@ export const getAllConversation = async (): Promise<UserConversationResponse[]> 
                 : null,
             jobApplication: conversation.jobApplication
                 ? {
+                    id: conversation.jobApplication.id, 
                     job: {
                         id: conversation.jobApplication.job.id,
                         title: conversation.jobApplication.job.title,
@@ -113,77 +115,102 @@ export const getCompleteConversationById = async (conversationId:string): Promis
         if (!auth?.user.id) {
             throw new ErrorHandler('Not Authorized', 'UNAUTHORIZED');
         }
+        const response = await prisma.message.findMany({
+            where: {
+              conversationId: conversationId,
+            },
+            select:{
+                id:true,
+                senderId:true,
+                content:true,
+                isRead:true,
+                createdAt:true
+            }
+          });
+         
+          if (!response) {
+            throw new ErrorHandler('Conversation not found', 'NOT_FOUND');
+          }
+      
+          return new SuccessResponse(
+            'Conversation Retrieved Successfully',
+            200,
+            response
+          ).serialize();      
+
+
+    }catch(error){
+        console.log(error)
+    }
+}
+
+export const getResponseWithCompanyDetails = async (conversationId:string): Promise<CompleteConversationResponse | undefined> =>{
+    try{
+
+        const auth = await getServerSession(authOptions);
+
+        if (!auth?.user.id) {
+            throw new ErrorHandler('Not Authorized', 'UNAUTHORIZED');
+        }
         
-        const response = await prisma.conversation.findFirst({
+        const response = await prisma.conversation.findUnique({
             where: {
               id: conversationId,
             },
-            include: {
-              messages: {
-                orderBy: {
-                  createdAt: 'asc',                  
-                },
-
-                select: {
-                  id: true,
-                  content: true,
-                  createdAt: true,
-                  isRead: true,
-                  senderId:true,
-                }
-              },
-              jobApplication: {
-                select: {
-                  answers: true,
-                  status: true,
-                  appliedAt: true,
-                  job: {
-                    select: {
-                      id: true,
-                      title: true,
-                      description: true,
-                      type: true,
-                      category: true,
-                      workMode: true,
-                      currency: true,
-                      skills: true,
-                      expired: true,
-                      hasExpiryDate: true,
-                      expiryDate: true,
-                      hasSalaryRange: true,
-                      minSalary: true,
-                      maxSalary: true,
-                      hasExperiencerange: true,
-                      minExperience: true,
-                      maxExperience: true,
-                      isVerifiedJob: true,
-                      deleted: true,
-                      deletedAt: true,
-                      postedAt: true,
-                      updatedAt: true,
-                      responsibilities: true,
-                      company: {
-                        select: {
-                          id: true,
-                          companyName: true,
-                          companyLogo: true,
-                          companyEmail: true,
-                          companyBio: true,
-                          foundedYear: true,
-                          numberOfEmployees: true,
-                          CEOName: true,
-                          companyType: true,
-                          city: true,
-                          country: true,
-                          website: true,
-                          linkedinLink: true,
-                          twitterLink: true,
-                        },
-                      },
+            select:{
+              id:true,
+              jobApplication:{
+               select:{
+                answers:true,
+                status:true,
+                appliedAt:true,
+                job:{
+                    select:{
+                        id: true,
+                        title: true,
+                        description: true,
+                        type: true,
+                        category: true,
+                        workMode: true,
+                        currency: true,
+                        skills: true,
+                        expired: true,
+                        hasExpiryDate: true,
+                        expiryDate: true,
+                        hasSalaryRange: true,
+                        minSalary: true,
+                        maxSalary: true,
+                        hasExperiencerange: true,
+                        minExperience: true,
+                        maxExperience: true,
+                        isVerifiedJob: true,
+                        deleted: true,
+                        deletedAt: true,
+                        postedAt: true,
+                        updatedAt: true,
+                        responsibilities: true,
+                        company:{
+                            select:{
+                                id: true,
+                                companyName: true,
+                                companyLogo: true,
+                                companyEmail: true,
+                                companyBio: true,
+                                foundedYear: true,
+                                numberOfEmployees: true,
+                                CEOName: true,
+                                companyType: true,
+                                city: true,
+                                country: true,
+                                website: true,
+                                linkedinLink: true,
+                                twitterLink: true, 
+                            }
+                        } 
                     }
-                  }
                 }
-              }
+               }
+              } 
             }
           });
       
@@ -199,7 +226,49 @@ export const getCompleteConversationById = async (conversationId:string): Promis
 
 
     }catch(error){
-      
         console.log(error)
     }
 }
+
+export async function addMessageToConversation(
+    conversationId: string,
+    senderId: string,
+    content: string
+  ) {
+    try {
+      // Check if the conversation exists
+      const conversation = await prisma.conversation.findUnique({
+        where: { id: conversationId },
+        include: { participants: true }
+      })
+  
+      if (!conversation) {
+        throw new Error('Conversation not found')
+      }
+  
+      // Check if the sender is a participant in the conversation
+      if (!conversation.participants.some(participant => participant.id === senderId)) {
+        throw new Error('Sender is not a participant in this conversation')
+      }
+  
+      // Create and add the message to the conversation
+      const newMessage = await prisma.message.create({
+        data: {
+          conversationId,
+          senderId,
+          content,
+        },
+      })
+  
+      await prisma.conversation.update({
+        where: { id: conversationId },
+        data: { updatedAt: new Date() },
+      })
+  
+      return newMessage
+    } catch (error) {
+      console.error('Error adding message to conversation:', error)
+      throw error
+    }
+  }
+  

@@ -1,15 +1,18 @@
-import { getAllApplication } from "@/actions/job.action"
-import ApplicationContain from "@/components/application/ApplicationContain";
-import CompleteApplication from "@/components/application/CompleteApplication"
-import { redirect } from 'next/navigation';
 import { Suspense } from "react";
+import ApplicationContain from "@/components/application/ApplicationContain";
+import { getAllApplication } from "@/actions/job.action";
 
-export default  function page() {
+export default async function AppliedJobsPage() {
+  const appliedJobs = await getAllApplication();
   
-  return(  
-    <Suspense>
-      <ApplicationContain/>
+  if(!appliedJobs){
+    return 
+  }
+  
+  return (
+    <Suspense fallback={<div>Loading applications...</div>}>
+      <ApplicationContain initialData={appliedJobs} />
     </Suspense>
-  )
+  );
 }
 
