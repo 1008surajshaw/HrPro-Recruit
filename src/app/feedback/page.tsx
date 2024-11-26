@@ -5,7 +5,7 @@ import React from 'react'
 
 const page = async() => {
     const auth = await getServerSession(authOptions);
-
+     
     const userType = auth?.user.role === "HR"  ? "HR" : "USER"
     if(!auth?.user){
         return <p>Need to first Authenticate yourself before any FeedBack</p>

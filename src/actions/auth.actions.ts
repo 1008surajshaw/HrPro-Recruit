@@ -46,7 +46,7 @@ export const signUp = withServerActionAsyncCatcher<
     await prisma.$transaction(
       async (txn) => {
         const user = await txn.user.create({
-          data: { ...data, password: hashedPassword, role:data.role,isVerified:true  },
+          data: { ...data, password: hashedPassword, role:data.role,isVerified:false  },
         });
 
         const verificationToken = await txn.verificationToken.create({
@@ -208,7 +208,7 @@ export const verifyEmail = withServerActionAsyncCatcher<
     await prisma.$transaction(async (txn) => {
       await txn.user.update({
         where: { id: verificationToken.identifier },
-        data: { emailVerified: new Date() },
+        data: { emailVerified: new Date(),isVerified:true },
       });
 
 

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MessageCircle, Briefcase, Building2, CalendarDays } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import MessageSection from "./MessageSection"
 import { getCompleteConversationById,getResponseWithCompanyDetails } from "@/actions/message.action"
 import { LoadingSpinner } from "../loading-spinner"

@@ -91,21 +91,7 @@ const Header = () => {
                   </div>
                )
             }
-            <div className="flex items-center">
-              {mounted && (
-                <button
-                  className="border p-2.5 rounded-lg text-foreground/60 hover:dark:bg-[#191919] hover:bg-gray-100 md:mx-4 outline-none"
-                  onClick={toggleTheme}
-                  aria-label="theme"
-                >
-                  {theme === 'dark' ? (
-                    <Moon className="w-4 h-4" />
-                  ) : (
-                    <Sun className="w-4 h-4" />
-                  )}
-                </button>
-              )}
-            </div>
+            
 
             
             {session.status === 'authenticated' && (
@@ -143,6 +129,24 @@ const Header = () => {
                 </Button>
               </div>
             )}
+
+<div className="flex items-center">
+              {mounted && (
+                <button
+                  className="border p-2.5 rounded-lg text-foreground/60 hover:dark:bg-[#191919] hover:bg-gray-100 md:mx-4 outline-none"
+                  onClick={toggleTheme}
+                  aria-label="theme"
+                >
+                  {theme === 'dark' ? (
+                    <Moon className="w-4 h-4" />
+                  ) : (
+                    <Sun className="w-4 h-4" />
+                  )}
+                </button>
+              )}
+            </div>
+
+            
             <div className="hidden md:block ml-4">
               {session.status === 'loading' ? (
                 <Skeleton className="h-8 w-8 rounded-full" />

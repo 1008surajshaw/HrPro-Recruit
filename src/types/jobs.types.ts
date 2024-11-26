@@ -210,5 +210,15 @@ export type AppliedJob = {
         twitterLink?: string| null;
       }
     };
+    zoomMeet:{
+      topic:string;
+      startTime:Date,
+      duration:number,
+      joinUrl:string,
+      password?:string | null,
+      status:string,
+      createdAt:Date,
+      hostJoinUrl:string,
+    }[] | null
 }[];
 }

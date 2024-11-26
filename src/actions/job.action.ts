@@ -1192,6 +1192,18 @@ export async function getAllApplication(): Promise<GetAllApplicationResponse | u
               }
             }
           }
+        },
+        zoomMeet:{
+            select:{
+              topic:true,
+              startTime:true,
+              duration:true,
+              joinUrl:true,
+              password:true,
+              status:true,
+              createdAt:true,
+              hostJoinUrl:true,
+            }
         }
       }
     });
