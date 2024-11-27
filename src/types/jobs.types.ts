@@ -1,5 +1,6 @@
 import { Currency, EmployementType, WorkMode ,Status, Experience } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
+
 export interface JobType {
   id: string;
   title: string;
@@ -222,3 +223,35 @@ export type AppliedJob = {
     }[] | null
 }[];
 }
+
+
+
+export interface Job {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  hasExperiencerange: boolean;
+  minExperience: number | null;
+  maxExperience: number | null;
+  hasExpiryDate: boolean;
+  expiryDate: Date | null;
+  skills: string[];
+  workMode: string;
+  category: string;
+  minSalary: number | null;
+  maxSalary: number | null;
+  postedAt: Date;
+  expired: boolean;
+}
+
+export interface Bookmark {
+  job: Job;
+}
+
+export interface BookmarkResponse {
+  status: number;
+  message: string;
+  data: JobType[] | null;
+}
+

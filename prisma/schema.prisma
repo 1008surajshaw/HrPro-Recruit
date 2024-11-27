@@ -55,6 +55,7 @@ model User {
   subscriptionEndDate   DateTime?
   jobPostsRemaining     Int           @default(0)
   payments        Payment[]
+  
 
  
 }

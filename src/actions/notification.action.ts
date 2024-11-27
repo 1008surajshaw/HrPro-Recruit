@@ -42,9 +42,13 @@ export async function getNotification(userId:string){
 
       })
 
-      return new SuccessResponse('Recently Notification fetch successfully', 200, {
+      if (!recentNotification) throw new ErrorHandler('User Not Found', 'NOT_FOUND');
+
+      return new SuccessResponse(
+        'Recently Notification fetch successfully', 
+        200, 
         recentNotification,
-      }).serialize();
+      ).serialize();
     }catch(_){
         return new ErrorHandler('Internal server error', 'DATABASE_ERROR');
     }

@@ -14,8 +14,8 @@ import { useSession } from 'next-auth/react'
 import { loadStripe } from '@stripe/stripe-js'
 import { createCheckOutSession, getCurrentUserPlan } from '@/actions/subscription.action'
 import { toast } from "@/components/ui/use-toast"
-import { dummyPricingPlans, paymentHistory } from '@/lib/dummyData'
-import { SubscriptionTier, UserSubscription } from '@/types/subscription.types'
+import { dummyPricingPlans } from '@/lib/dummyData'
+import {  UserSubscription } from '@/types/subscription.types'
 
 type Plans = {
   id:string,

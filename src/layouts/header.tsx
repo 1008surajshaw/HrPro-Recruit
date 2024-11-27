@@ -28,6 +28,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import companyLogo from '../../public/hrpro-logo.png'
+import { useNotifications } from '@/hooks/useNotifications';
 
 export const CompanyLogo = () => {
   return (
@@ -47,6 +48,8 @@ const Header = () => {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const notification = useNotifications(session.data?.user?.id || '');
+
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -55,6 +58,7 @@ const Header = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
+
 
   return (
     <>
@@ -91,29 +95,37 @@ const Header = () => {
                   </div>
                )
             }
-            
-
-            
             {session.status === 'authenticated' && (
               <div className="flex items-center gap-4 px-2">
                 {/* Notification Icon with Dropdown */}
-                <DropdownMenu open={notificationOpen} onOpenChange={setNotificationOpen}>
+                <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative" aria-label="notifications">
                       <Bell className="w-5 h-5 text-foreground/60 hover:text-foreground" />
+                      {notification.notifications.length > 0 && (
+                        <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                      )}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-80">
-                    <DropdownMenuItem>
-                      <span className="font-medium">New notification</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <span className="font-medium">Another notification</span>
-                    </DropdownMenuItem>
+                    {notification.notifications.length > 0 ? (
+                      notification.notifications.map((notifi,index) => (
+                        <DropdownMenuItem key={index}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{notifi.content}</span>
+                            <span className="text-xs text-gray-500">
+                              {new Date(notifi.createdAt).toLocaleString()}
+                            </span>
+                          </div>
+                        </DropdownMenuItem>
+                      ))
+                    ) : (
+                      <DropdownMenuItem>No new notifications</DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    {/* <DropdownMenuItem>
                       <Link href="/notifications" className="w-full">View all notifications</Link>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                   </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -130,7 +142,7 @@ const Header = () => {
               </div>
             )}
 
-<div className="flex items-center">
+           <div className="flex items-center">
               {mounted && (
                 <button
                   className="border p-2.5 rounded-lg text-foreground/60 hover:dark:bg-[#191919] hover:bg-gray-100 md:mx-4 outline-none"

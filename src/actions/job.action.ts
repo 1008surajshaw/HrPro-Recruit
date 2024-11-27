@@ -30,6 +30,7 @@ import {
   getAllRecommendedJobs,
   getCompleteJobDetails,
   getJobType,
+  JobType,
 } from '@/types/jobs.types';
 import { revalidatePath } from 'next/cache';
 import { Status } from '@prisma/client';
@@ -726,6 +727,7 @@ export async function GetUserBookmarksId() {
         bookmark: {
           select: {
             jobId: true,
+     
           },
         },
       },
@@ -1215,5 +1217,92 @@ export async function getAllApplication(): Promise<GetAllApplicationResponse | u
   } catch (error) {
     console.error(error);
     
+  }
+}
+
+
+export async function GetUserBookmark() {
+  try {
+    const auth = await getServerSession(authOptions);
+
+    if (!auth || !auth?.user?.id)
+      throw new ErrorHandler('Not Authorized', 'UNAUTHORIZED');
+
+    const userId = auth.user.id;
+
+    const getUserBookmarks = await prisma.bookmark.findMany({
+      where: {
+        userId: userId,
+      },
+      select: {
+        job: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            type: true,
+            category: true,
+            workMode: true,
+            currency: true,
+            application: true,
+            skills: true,
+            expired: true,
+            hasExpiryDate: true,
+            expiryDate: true,
+            hasSalaryRange: true,
+            minSalary: true,
+            maxSalary: true,
+            hasExperiencerange: true,
+            minExperience: true,
+            maxExperience: true,
+            isVerifiedJob: true,
+            deleted: true,
+            deletedAt: true,
+            postedAt: true,
+            updatedAt: true,
+            responsibilities: true,
+            customQuestions: true,
+            rejectionMessage: true,
+            acceptanceMessage: true,
+            company: {
+              select: {
+                id: true,
+                companyName: true,
+                companyLogo: true,
+                companyEmail: true,
+                companyBio: true,
+                foundedYear: true,
+                numberOfEmployees: true,
+                CEOName: true,
+                companyType: true,
+                city: true,
+                country: true,
+                website: true,
+                linkedinLink: true,
+                twitterLink: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!getUserBookmarks || getUserBookmarks.length === 0)
+      throw new Error('No Bookmarked Job found');
+
+    // Flatten data
+    const jobs: JobType[] = getUserBookmarks.map(bookmark => bookmark.job);
+
+    return {
+      status: 200,
+      message: 'Bookmarks fetched successfully',
+      data: jobs,
+    };
+  } catch (error) {
+    return {
+      status: 404,
+      message: (error as Error).message,
+      data: null,
+    };
   }
 }
