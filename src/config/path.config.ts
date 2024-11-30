@@ -25,5 +25,6 @@ const APP_PATHS = {
   RESUME: '/profile/resume',
   EXPERIENCE: '/profile/experience',
   SKILLS: '/profile/skills',
+  TERM:'/term',
 };
 export default APP_PATHS;

@@ -79,7 +79,7 @@ export function PrivacyAndGDPRForm({ onAccepted }: PrivacyAndGDPRFormProps) {
         <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
 
         <h2>7. Contact Us</h2>
-        <p>If you have any questions about this Privacy Policy, please contact us at: privacy@jobportal.com</p>
+        <p>If you have any questions about this Privacy Policy, please contact us at: hrproams@gmail.com</p>
       </div>
         
         <h3>GDPR Compliance</h3>

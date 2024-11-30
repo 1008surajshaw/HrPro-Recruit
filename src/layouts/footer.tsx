@@ -61,10 +61,10 @@ const Footer = () => {
 
         <div className="mt-8 pt-8 border-t border-red-500 dark:border-red-700 flex flex-col sm:flex-row justify-between items-center text-sm">
           <p className="mb-4 sm:mb-0">
-            © 2024 HrPro Recruit, Inc. • 
-            <a href="#" className="hover:underline ml-2 mr-2">Privacy</a> • 
-            <a href="#" className="hover:underline mr-2">Terms</a> • 
-            <a href="#" className="hover:underline">Sitemap</a>
+            © 2024 HrPro Recruit. • 
+            <a href="/term" className="hover:underline ml-2 mr-2" >Privacy</a> • 
+            <a href="/term" className="hover:underline mr-2">Terms</a> • 
+            <a href="/term" className="hover:underline">Sitemap</a>
           </p>
           <div className="flex flex-wrap justify-center">
             <a href="#" className="mx-2 my-1 hover:underline">Twitter</a>

@@ -22,6 +22,8 @@ import random10 from "../../../public/randomimg/random10.png"
 import { Role } from "@prisma/client"
 import { saveUserResponse } from "@/actions/feedback.action"
 import { useToast } from '../../components/ui/use-toast';
+import { useRouter } from "next/navigation"
+import APP_PATHS from "@/config/path.config"
 
 type FeedbackOption = {
   id: string
@@ -104,6 +106,7 @@ const randomImages = [random1, random2, random3, random4, random5, random6, rand
 
 export default function FeedbackPage({ userType = "USER",userId }: { userType?:Role ,userId:string}) {
   const { toast } = useToast();
+  const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [feedback, setFeedback] = useState<Record<string, string>>({});
@@ -131,7 +134,7 @@ export default function FeedbackPage({ userType = "USER",userId }: { userType?:R
       alert("Please provide an overall rating before submitting.");
       return;
     }
-
+    
     const feedbackData = {
       userType,
       overallRating,
@@ -147,14 +150,15 @@ export default function FeedbackPage({ userType = "USER",userId }: { userType?:R
         variant: "success",
         title: "Thank you for your valuable feedback. It will help us improve the application.",
       });
-
+      router.push(APP_PATHS.HOME);
       // Reset the form or redirect to a thank-you page
     } catch (error) {
       toast({
         title: "We're sorry for the inconvenience. Please report this issue to our support team.",
         variant: "destructive",
       });
-    }
+    } 
+
   };
 
   const renderSmileyFace = (rating: number) => {

@@ -58,7 +58,7 @@ export default function Component() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Locations</SelectItem>
-              <SelectItem value="remote">Remote</SelectItem>
+              <SelectItem value="Netherlands">Netherlands</SelectItem>
               <SelectItem value="us">United States</SelectItem>
               <SelectItem value="uk">United Kingdom</SelectItem>
               <SelectItem value="eu">Europe</SelectItem>
