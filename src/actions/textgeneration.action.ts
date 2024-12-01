@@ -30,6 +30,72 @@ export const improveText = async (request: string,type:string,isArray:boolean) =
     if (!completion.choices[0].message.content) {
         throw new Error("Failed to generate job description");
     }
+    
+     const response = completion.choices[0].message.content;
+     const parsedResponse = JSON.parse(response || '{}');
+  
 
-    return completion.choices[0].message.content;
+    return parsedResponse;
 };
+
+
+
+interface JobContext {
+    title: string;
+    experienceRange: string;
+    workMode: string;
+    employmentType: string;
+    category: string;
+    salaryRange: string;
+    applicationInstructions: string;
+  }
+  
+  export function generateJobDescriptionPrompt(context: JobContext): string {
+    return `
+      Generate a comprehensive job description for the following position:
+      
+      Title: ${context.title}
+      Experience Required: ${context.experienceRange}
+      Work Mode: ${context.workMode}
+      Employment Type: ${context.employmentType}
+      Category: ${context.category}
+      Salary Range: ${context.salaryRange}
+      Application Instructions: ${context.applicationInstructions}
+  
+      Please provide:
+      1. A detailed job description (approximately 200-300 words)
+      2. A list of 5-7 key responsibilities
+      3. A list of 5-7 required skills or qualifications
+  
+      Format the output as a JSON object with keys: description, responsibilities (as an array), and skills (as an array).
+    `;
+  }
+  
+  
+  export async function generateAIJobDescription(context: JobContext): Promise<{ 
+    description: string; 
+    responsibilities: string[]; 
+    skills: string[];
+  }> {
+    try {
+      const prompt = generateJobDescriptionPrompt(context);
+  
+      const completion = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo-16k",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+      });
+  
+      const response = completion.choices[0].message.content;
+      const parsedResponse = JSON.parse(response || '{}');
+  
+      return {
+        description: parsedResponse.description || '',
+        responsibilities: parsedResponse.responsibilities || [],
+        skills: parsedResponse.skills || [],
+      };
+    } catch (error) {
+      console.error('Error generating AI job description:', error);
+      throw new Error('Failed to generate job description');
+    }
+  }

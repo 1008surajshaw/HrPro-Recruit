@@ -31,7 +31,7 @@ export const createCheckOutSession = async (tierId: string, planDuration: string
       ? subscriptionTier.price * 100 
       : subscriptionTier.price * 12 * 0.8 * 100
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

@@ -15,6 +15,26 @@ export async function middleware(req: NextRequest) {
   ) {
     return NextResponse.redirect(new URL('/', req.url));
   }
+
+  if(pathname === '/pricing' && 
+    token?.role !== 'HR'
+  ){
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
+  if(pathname === '/message' && 
+    token == null
+  ){
+    return NextResponse.redirect(new URL('/signin', req.url));
+  }
+
+  if(pathname === '/feedback' && 
+    token == null
+  ){
+    return NextResponse.redirect(new URL('/signin', req.url));
+  }
+
+
   if (
     pathname !== '/create-profile' &&
     token?.role === 'USER' &&
