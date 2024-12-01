@@ -39,6 +39,7 @@ import { sendEmail } from '@/lib/sendEmail';
 import ApplicationConfirmationEmail from '@/mailtemplate/ApplicationConfirmationEmail';
 import NotificationUpdate from '@/mailtemplate/NotificationUpdate';
 import { GetAllApplicationResponse } from '@/types/application.type';
+import { JobNotificationEmail } from '@/mailtemplate/JobNotificationEmail';
 
 type additional = {
   isVerifiedJob: boolean;
@@ -1322,3 +1323,83 @@ export async function GetUserBookmark() {
     };
   }
 }
+
+
+
+export const sendDailyJobNotifications = async () => {
+  try {
+    // Get jobs posted in the last 24 hours
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    
+    const recentJobs = await prisma.job.findMany({
+      where: {
+        postedAt: {
+          gte: twentyFourHoursAgo
+        }
+      },
+      select: {
+        id:true,
+        title: true,
+        type: true,
+        category: true,
+        workMode: true,
+        currency: true,
+        skills: true,
+        hasSalaryRange: true,
+        minSalary: true,
+        maxSalary: true,
+        hasExperiencerange: true,
+        minExperience: true,
+        maxExperience: true,
+        company: {
+          select: {
+            companyName: true,
+            companyLogo: true,
+          },
+        },
+      },
+      orderBy: {
+        postedAt: 'desc'
+      }
+    });
+
+    // Get all users with role 'USER'
+    const users = await prisma.user.findMany({
+      where: {
+        role: 'USER'
+      },
+      select: {
+        email: true,
+        name: true
+      }
+    });
+
+    // Send job notifications to all users
+    const emailPromises = users.map(async (user) => {
+      try {
+        await sendEmail(
+          user.email,
+          "Today's New Job Opportunities",
+          JobNotificationEmail(user.name, recentJobs)
+        );
+      } catch (emailError) {
+        console.error(`Failed to send email to ${user.email}:`, emailError);
+      }
+    });
+
+    // Wait for all email sending attempts to complete
+    await Promise.allSettled(emailPromises);
+
+    return {
+      success: true,
+      jobsSent: recentJobs.length,
+      userNotificationsSent: users.length
+    };
+  } catch (error) {
+    console.error('Error in daily job notifications:', error);
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
