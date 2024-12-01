@@ -24,7 +24,7 @@ const page = async () => {
     }
 
     return (
-        <div className='w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-screen'>
+        <div className='w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen'>
             <h2 className='py-8 text-2xl font-bold'>Ongoing Conversations</h2>
             <div className="space-y-4">
                 {conversations.map((conversation: UserConversationResponse) => (
