@@ -244,7 +244,6 @@ const PostJobForm = ({ compnayId }: { compnayId: string }) => {
       };
 
       const generatedDescription = await generateAIJobDescription(context);
-      console.log(generatedDescription,"this is description")
       form.setValue("description", generatedDescription.description);
       form.setValue(
         "responsibilities",
@@ -716,6 +715,11 @@ const PostJobForm = ({ compnayId }: { compnayId: string }) => {
                                   className="w-full dark:bg-gray-800 dark:border-none dark:text-white pr-10"
                                   rows={8}
                                   value={field.value}
+                                  onChange={(e) =>{
+                                    field.onChange(
+                                      e.target.value
+                                    )
+                                  }}
                                 />
                               </FormControl>
                               <Button

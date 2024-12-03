@@ -413,7 +413,12 @@ export const getUserDetailsWithId = async (id: string) => {
         twitterLink: true,
         certificate:true,
         achivement:true,
-        company:true
+        company:true,
+        subscriptionTierId:true,
+        subscriptionEndDate:true,
+        subscriptionTier:true,
+        
+
       },
     });
     if (!res) throw new ErrorHandler('User Not Found', 'NOT_FOUND');

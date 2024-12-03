@@ -44,9 +44,9 @@ export default function Signup() {
 
   const role = form.watch('role');
 
-  useEffect(() => {
-    console.log(role);
-  }, [role]);
+  // useEffect(() => {
+  //   console.log(role);
+  // }, [role]);
   
   async function signupHandler(data: SignupSchemaType) {
     try {

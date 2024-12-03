@@ -2,12 +2,11 @@
 
 import { useState,useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, X, CreditCard, Clock, Package, Zap } from 'lucide-react'
+import { Check, CreditCard, Clock, Package, Zap } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useSession } from 'next-auth/react'
@@ -16,6 +15,7 @@ import { createCheckOutSession, getCurrentUserPlan } from '@/actions/subscriptio
 import { toast } from "@/components/ui/use-toast"
 import { dummyPricingPlans } from '@/lib/dummyData'
 import {  UserSubscription } from '@/types/subscription.types'
+import { LoadingSpinner } from '@/components/loading-spinner'
 
 type Plans = {
   id:string,
@@ -29,12 +29,14 @@ export default function PricingDashboard() {
   const { data: session } = useSession()
   const [selectedDuration, setSelectedDuration] = useState('monthly')
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [isLoadingPlan, setIsLoadingPlan] = useState(false)
   const [currentPlan, setCurrentPlan] = useState<UserSubscription | null>(null)
+
 
 
   useEffect(() => {
     const fetchCurrentPlan = async () => {
+      setIsLoadingPlan(true)
       try {
         const plan = await getCurrentUserPlan()
         if ('message' in plan) {
@@ -53,6 +55,8 @@ export default function PricingDashboard() {
           description: "Failed to fetch current plan. Please try again.",
           variant: "destructive",
         })
+      }finally{
+        setIsLoadingPlan(false)
       }
     }
 
@@ -87,7 +91,9 @@ export default function PricingDashboard() {
       const response = await createCheckOutSession(
         plan.id,
         selectedDuration,
-        duration
+        duration,
+        plan.jobPostLimit
+
       )
       
       if (!response || !response.sessionId) {
@@ -116,7 +122,7 @@ export default function PricingDashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-16 h-screen">
+    <div className="container mx-auto px-4 py-16 ">
       <h1 className="text-4xl font-bold mb-4 text-red-600 dark:text-red-400">TalentConnect Pro</h1>
       <p className="text-lg mb-8 text-gray-600 dark:text-gray-300">
         Empower your recruitment process with TalentConnect Pro. Our platform streamlines job postings, 
@@ -221,7 +227,9 @@ export default function PricingDashboard() {
               <CardDescription>Your current subscription details</CardDescription>
             </CardHeader>
             <CardContent>
-              {currentPlan && currentPlan.subscriptionTier ? (
+              {
+                isLoadingPlan ? (<LoadingSpinner/>):(<>
+                   {currentPlan && currentPlan.subscriptionTier ? (
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="font-medium">Plan:</span>
@@ -233,7 +241,7 @@ export default function PricingDashboard() {
                   </div>
                   <div className="flex justify-between">
                     <span className="font-medium">Job Post Limit:</span>
-                    <span>{currentPlan.subscriptionTier.jobPostLimit}</span>
+                    <span>{currentPlan.subscriptionTier.jobPostLimit === -1 ? "unlimited" : currentPlan.subscriptionTier.jobPostLimit}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="font-medium">Start Date:</span>
@@ -247,6 +255,9 @@ export default function PricingDashboard() {
               ) : (
                 <p>No active subscription</p>
               )}
+                </>)
+              }
+              
             </CardContent>
             {/* <CardFooter>
               <Button variant="outline" className="w-full border-red-600 text-red-600 hover:bg-red-600 hover:text-white">

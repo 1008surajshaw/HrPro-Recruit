@@ -11,7 +11,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-11-20.acacia', // Use the correct API version
 })
 
-export const createCheckOutSession = async (tierId: string, planDuration: string, duration: number) => {
+export const createCheckOutSession = async (tierId: string, planDuration: string, duration: number , jobPostLimit:number) => {
   const session = await getServerSession(authOptions)
   
   if (!session || !session.user || session.user.role !== 'HR') {
@@ -53,6 +53,7 @@ export const createCheckOutSession = async (tierId: string, planDuration: string
         planDuration,
         duration,
         userId: session.user.id,
+        jobPostsRemaining: jobPostLimit
       },
     })
 
@@ -76,18 +77,30 @@ export const verifySubscription = async (sessionId: string) => {
     if (checkoutSession.payment_status !== 'paid') {
       throw new Error('Payment not successful')
     }
+    
     //@ts-ignore
-    const { tierId, duration } = checkoutSession.metadata
+    const { tierId, duration, jobPostsRemaining } = checkoutSession.metadata
 
-    // Calculate subscription end date based on duration
+    // Check if payment already exists
+    const existingPayment = await prisma.payment.findFirst({
+      where: {
+        paymentIntentId: checkoutSession.payment_intent as string
+      }
+    })
+
+    if (existingPayment) {
+      return { success: true, message: 'Payment already processed' }
+    }
+
+    // Calculate subscription end date
     const subscriptionEndDate = new Date()
-    subscriptionEndDate.setDate(subscriptionEndDate.getDate() + (parseInt(duration) * 30)) // Approximate month as 30 days
+    subscriptionEndDate.setDate(subscriptionEndDate.getDate() + (parseInt(duration) * 30))
 
     // Create payment record
-    const curr = checkoutSession.currency ? checkoutSession.currency: "usd"
+    const curr = checkoutSession.currency || "usd"
     await prisma.payment.create({
       data: {
-        amount: checkoutSession.amount_total! / 100, // Convert cents to dollars
+        amount: checkoutSession.amount_total! / 100,
         currency: curr,
         status: 'SUCCEEDED',
         paymentMethod: 'card',
@@ -104,6 +117,7 @@ export const verifySubscription = async (sessionId: string) => {
         subscriptionTierId: tierId,
         subscriptionStartDate: new Date(),
         subscriptionEndDate: subscriptionEndDate,
+        jobPostsRemaining: parseInt(jobPostsRemaining)
       },
     })
 

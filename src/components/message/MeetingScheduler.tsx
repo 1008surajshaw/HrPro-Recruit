@@ -95,15 +95,12 @@ const MeetingScheduler = ({
 
   const onSubmit = async (data: CreateZoomMeetingInput) => {
     setIsSubmitting(true);
-    console.log("Form data before submission:", data);
     try {
       const payload = {
         ...data,
         startTime: data.startTime,
       };
-      console.log("Payload being sent to createZoomMeet:", payload);
       const response = await createZoomMeet(payload);
-      console.log("Response from createZoomMeet:", response);
 
       if (response) {
         toast({

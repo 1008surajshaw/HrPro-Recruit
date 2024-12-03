@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
 import { getUserDetailsWithId } from '@/actions/user.profile.actions';
 import { redirect } from 'next/navigation';
+import SubscriptionExpirationModal from '@/components/jobpost/SubscriptionExpirationModal';
 
 
 const page = async() => {
@@ -21,6 +22,11 @@ const page = async() => {
     }
   }
 
+  const isSubscriptionValid = userDetails?.subscriptionEndDate 
+    ? new Date(userDetails.subscriptionEndDate) > new Date() 
+    : false;
+  const hasNoSubscription = !userDetails?.subscriptionTierId;
+
   if(!userDetails?.company){
     return (
       <div className='h-screen w-full justify-center items-center border-2 dark:text-white '>
@@ -29,14 +35,24 @@ const page = async() => {
     )
   }
 
-  return (
-    <div className="mt-10 flex flex-col items-center">
-      <div>
-        <h1 className="text-start text-4xl font-semibold">Post a job</h1>
-      </div>
+  
 
-      <PostJobForm compnayId={userDetails.company.id}/>
-    </div>
+  return (
+    <>
+     {(hasNoSubscription || !isSubscriptionValid) && (
+        <SubscriptionExpirationModal 
+          hasSubscription={!!userDetails?.subscriptionTierId}
+        />
+      )}
+
+      <div className="mt-10 flex flex-col items-center">
+        <div>
+          <h1 className="text-start text-4xl font-semibold">Post a job</h1>
+        </div>
+
+        <PostJobForm compnayId={userDetails.company.id}/>
+      </div>
+    </>
   );
 };
 

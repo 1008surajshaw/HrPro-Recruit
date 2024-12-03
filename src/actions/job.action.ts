@@ -59,6 +59,26 @@ export const createJob = async (data:any) => {
   if(!auth?.user.id){
     return 
   }
+  const user = await prisma.user.findUnique({
+    where:{
+      id:auth?.user.id
+    },
+    select:{
+      jobPostsRemaining:true,
+      subscriptionTierId:true
+    }
+  })
+
+  if(!user?.jobPostsRemaining && user?.jobPostsRemaining == 0 ){
+      return
+  }
+
+  if (user?.jobPostsRemaining !== -1) {
+    await prisma.user.update({
+      where: { id: auth.user.id },
+      data: { jobPostsRemaining: { decrement: 1 } }
+    });
+  }
   
   await prisma.job.create({
     data: {
