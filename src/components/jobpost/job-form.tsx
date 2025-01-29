@@ -45,6 +45,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
 import { Calendar } from "@/components/ui/calendar";
 import { SkillsCombobox } from "../user/skills-combobox";
 import { Textarea } from "../ui/textarea";
@@ -153,7 +154,6 @@ const PostJobForm = ({ compnayId }: { compnayId: string }) => {
         });
       }
 
-      // Reset form and state
       form.reset();
       setComboBoxSelectedValues([]);
       setScreeningQuestions([]);
@@ -305,29 +305,31 @@ const PostJobForm = ({ compnayId }: { compnayId: string }) => {
                     <h2 className="text-2xl font-semibold mb-6">Job details</h2>
 
                     <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-medium flex items-center">
-                            Job title
-                            <span
-                              className="text-red-500 ml-1 cursor-pointer"
-                              title="This field is required"
-                            >
-                              *
-                            </span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full dark:bg-gray-800 dark:border-none "
-                              placeholder="What's the job?"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                    control={form.control}
+                    name="title"
+                    rules={{ required: "Job title is required" }} // Add validation rule
+                    render={({ field, fieldState }) => (
+                      <FormItem>
+                        <FormLabel className="font-medium flex items-center">
+                          Job title
+                          <span className="text-red-500 ml-1 cursor-pointer" title="This field is required">
+                            *
+                          </span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="w-full dark:bg-gray-800 dark:border-none"
+                            placeholder="What's the job?"
+                          />
+                        </FormControl>
+                        {fieldState.error && (
+                          <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>
+                        )}
+                      </FormItem>
+                    )}
+                  />
+
                     <div className="grid grid-cols md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
@@ -695,54 +697,48 @@ const PostJobForm = ({ compnayId }: { compnayId: string }) => {
 
                     <div>
                     <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="font-medium">
-                              Job Description
-                              <span
-                                className="text-red-500 ml-1"
-                                aria-hidden="true"
-                              >
-                                *
-                              </span>
-                            </FormLabel>
-                            <div className="relative">
-                              <FormControl>
-                                <Textarea
-                                  placeholder="Enter job Description "
-                                  className="w-full dark:bg-gray-800 dark:border-none dark:text-white pr-10"
-                                  rows={8}
-                                  value={field.value}
-                                  onChange={(e) =>{
-                                    field.onChange(
-                                      e.target.value
-                                    )
-                                  }}
-                                />
-                              </FormControl>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={generateJobDescription}
-                                disabled={isGenerating}
-                                className="absolute top-0 right-0 mt-1 mr-1"
-                              >
-                                {isGenerating ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Wand2 className="h-4 w-4" color="red" />
-                                )}
-                                <span className="sr-only">
-                                  Generate responsibilities
-                                </span>
-                              </Button>
-                            </div>
-                          </FormItem>
-                        )}
-                      /> 
+                      control={form.control}
+                      name="description"
+                      rules={{ required: "Job description is required" }} // Add validation rule
+                      render={({ field, fieldState }) => (
+                        <FormItem>
+                          <FormLabel className="font-medium">
+                            Job Description
+                            <span className="text-red-500 ml-1" aria-hidden="true">*</span>
+                          </FormLabel>
+                          <div className="relative">
+                            <FormControl>
+                              <Textarea
+                                placeholder="Enter job description"
+                                className="w-full dark:bg-gray-800 dark:border-none dark:text-white pr-10"
+                                rows={8}
+                                value={field.value}
+                                onChange={(e) => field.onChange(e.target.value)}
+                              />
+                            </FormControl>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={generateJobDescription}
+                              disabled={isGenerating}
+                              className="absolute top-0 right-0 mt-1 mr-1"
+                            >
+                              {isGenerating ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Wand2 className="h-4 w-4" color="red" />
+                              )}
+                              <span className="sr-only">Generate responsibilities</span>
+                            </Button>
+                          </div>
+                          {fieldState.error && (
+                            <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>
+                          )}
+                        </FormItem>
+                      )}
+                    />
+
                      
                     </div>
 
@@ -771,55 +767,51 @@ const PostJobForm = ({ compnayId }: { compnayId: string }) => {
                     ></SkillsCombobox>
 
                     <div>
-                      <FormField
-                        control={form.control}
-                        name="responsibilities"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="font-medium">
-                              Job Responsibilities
-                              <span
-                                className="text-red-500 ml-1"
-                                aria-hidden="true"
-                              >
-                                *
-                              </span>
-                            </FormLabel>
-                            <div className="relative">
-                              <FormControl>
-                                <Textarea
-                                  placeholder="Enter job responsibilities (one per line)"
-                                  value={field.value?.join("\n") || ""}
-                                  onChange={(e) =>
-                                    field.onChange(
-                                      e.target.value.split("\n").filter(Boolean)
-                                    )
-                                  }
-                                  className="w-full dark:bg-gray-800 dark:border-none dark:text-white pr-10"
-                                  rows={8}
-                                />
-                              </FormControl>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={generateResponsibilities}
-                                disabled={isGenerating}
-                                className="absolute top-0 right-0 mt-1 mr-1"
-                              >
-                                {isGenerating ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Wand2 className="h-4 w-4" color="red" />
-                                )}
-                                <span className="sr-only">
-                                  Generate responsibilities
-                                </span>
-                              </Button>
-                            </div>
-                          </FormItem>
-                        )}
-                      />
+                    <FormField
+                      control={form.control}
+                      name="responsibilities"
+                      rules={{ required: "Job responsibilities are required" }} // Add validation rule
+                      render={({ field, fieldState }) => (
+                        <FormItem>
+                          <FormLabel className="font-medium">
+                            Job Responsibilities
+                            <span className="text-red-500 ml-1" aria-hidden="true">*</span>
+                          </FormLabel>
+                          <div className="relative">
+                            <FormControl>
+                              <Textarea
+                                placeholder="Enter job responsibilities (one per line)"
+                                value={field.value?.join("\n") || ""}
+                                onChange={(e) =>
+                                  field.onChange(e.target.value.split("\n").filter(Boolean))
+                                }
+                                className="w-full dark:bg-gray-800 dark:border-none dark:text-white pr-10"
+                                rows={8}
+                              />
+                            </FormControl>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={generateResponsibilities}
+                              disabled={isGenerating}
+                              className="absolute top-0 right-0 mt-1 mr-1"
+                            >
+                              {isGenerating ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Wand2 className="h-4 w-4" color="red" />
+                              )}
+                              <span className="sr-only">Generate responsibilities</span>
+                            </Button>
+                          </div>
+                          {fieldState.error && (
+                            <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>
+                          )}
+                        </FormItem>
+                      )}
+                    />
+
                     </div>
 
                     <div>
@@ -858,7 +850,7 @@ const PostJobForm = ({ compnayId }: { compnayId: string }) => {
                         className="text-sm font-medium leading-none cursor-pointer"
                       >
                         Want to set any Custom Message for Accepted and rejected
-                        Candidates
+                        Candidates ?
                       </label>
                     </div>
 

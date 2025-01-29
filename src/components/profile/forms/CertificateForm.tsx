@@ -33,8 +33,8 @@ const CertificateForm = ({
           issuingOrganization: selectedCertificate?.issuingOrganization || '',
           issueDate: selectedCertificate?.issueDate ||undefined ,
           expirationDate: selectedCertificate?.expirationDate || undefined ,
-          credentialId: selectedCertificate?.credentialId || '' ,
-          credentialUrl : selectedCertificate?.credentialUrl || '',
+          credentialId: selectedCertificate?.credentialId || undefined ,
+          credentialUrl : selectedCertificate?.credentialUrl || undefined,
         },
       });
     

@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import CustomQuestionAns from './CustomQuestionAns';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -26,6 +27,8 @@ const options = {
 };
 
 export const Job = ({ job }: { job: JobType }) => {
+  const { data: session } = useSession();
+
 
   return (
     <aside className="col-span-1 flex flex-col gap-6 lg:col-span-4">
@@ -121,6 +124,8 @@ export const Job = ({ job }: { job: JobType }) => {
       
           <Dialog>
             <DialogTrigger asChild>
+              {
+                session?.user.role == "USER" &&
               <Button
                 variant="default"
                 className="justify-self-start px-6 dark:text-white py-2 w-fit h-fit"
@@ -128,6 +133,7 @@ export const Job = ({ job }: { job: JobType }) => {
               >
                 {job.expired ? 'Position Filled' : 'Apply for Job'}
               </Button>
+              }
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>

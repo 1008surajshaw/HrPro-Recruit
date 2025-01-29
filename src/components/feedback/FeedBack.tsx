@@ -118,7 +118,7 @@ export default function FeedbackPage({ userType = "USER",userId }: { userType?:R
 
   const handleOptionSelect = (questionId: string, optionId: string) => {
     setFeedback((prev) => ({ ...prev, [questionId]: optionId }));
-    if (currentStep < totalSteps - 1) {
+    if (currentStep < totalSteps ) {
       setCurrentStep((prev) => prev + 1);
     }
   };

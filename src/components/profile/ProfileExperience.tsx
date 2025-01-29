@@ -1,14 +1,20 @@
-'use client';
-import { Circle, Building2, Pencil, Plus } from 'lucide-react';
-import React, { useState } from 'react';
-import { Button } from '../ui/button';
-import SheetWrapper from './sheets/SheetWrapper';
-import { SHEETS } from '@/lib/constant/profile.constant';
-import ExperienceForm from './forms/ExperienceForm';
-import { ExperienceType } from '@/types/user.types';
-import { format } from 'date-fns';
-import { ExperienceDeleteDialog } from './ExperienceDeleteDialog';
-import ProfileEmptyContainers from './emptycontainers/ProfileEmptyContainers';
+"use client";
+import { Circle, Building2, Pencil, Plus } from "lucide-react";
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import SheetWrapper from "./sheets/SheetWrapper";
+import { SHEETS } from "@/lib/constant/profile.constant";
+import ExperienceForm from "./forms/ExperienceForm";
+import { ExperienceType } from "@/types/user.types";
+import { format } from "date-fns";
+import { ExperienceDeleteDialog } from "./ExperienceDeleteDialog";
+import ProfileEmptyContainers from "./emptycontainers/ProfileEmptyContainers";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const ProfileExperience = ({
   isOwner,
@@ -28,19 +34,20 @@ const ProfileExperience = ({
 
   const handleClose = () => {
     setIsSheetOpen(false);
+    setSelecetedExperience(null);
   };
   const handleOpen = () => {
     setIsSheetOpen(true);
   };
   function formatDateRange(startDate: Date, endDate: Date | null): string {
-    const startFormatted = format(startDate, 'MMMM yy');
-    const endFormatted = endDate ? format(endDate, 'MMMM yy') : 'Present';
+    const startFormatted = format(startDate, "MMMM yy");
+    const endFormatted = endDate ? format(endDate, "MMMM yy") : "Present";
 
     return `${startFormatted} - ${endFormatted}`;
   }
 
   const title = selecetedExperience
-    ? SHEETS.expierence.title.replace('Add', 'Edit')
+    ? SHEETS.expierence.title.replace("Add", "Edit")
     : SHEETS.expierence.title;
 
   return (
@@ -49,7 +56,7 @@ const ProfileExperience = ({
         <h3 className="font-bold text-2xl">Work Experience</h3>
         {isOwner && (
           <Button
-            variant={'outline'}
+            variant={"outline"}
             className="px-3 py-2 rounded-sm text-slate-500 dark:text-slate-400 flex gap-2"
             onClick={handleOpen}
           >
@@ -65,13 +72,13 @@ const ProfileExperience = ({
           handleClick={handleOpen}
           title={
             isOwner
-              ? 'You haven’t added work experience yet'
-              : 'No Work Experience added.'
+              ? "You haven’t added work experience yet"
+              : "No Work Experience added."
           }
           description={
             isOwner
-              ? 'Share your experience to attract the right companies.'
-              : ''
+              ? "Share your experience to attract the right companies."
+              : ""
           }
           Icon={Building2}
         />
@@ -110,17 +117,38 @@ const ProfileExperience = ({
                     </div>
                     {isOwner && (
                       <div className="flex gap-3 items-center w-fit">
-                        <ExperienceDeleteDialog experienceId={experience.id} />
-                        <Button
-                          className="bg-transparent p-0 b-0 hover:bg-transparent"
-                          onClick={() => handleEditClick(experience)}
-                        >
-                          <Pencil
-                            width={16}
-                            height={16}
-                            className="dark:text-slate-400 text-slate-500"
-                          />
-                        </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <ExperienceDeleteDialog
+                                experienceId={experience.id}
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Delete Experience</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Button
+                                className="bg-transparent p-0 b-0 hover:bg-transparent"
+                                onClick={() => handleEditClick(experience)}
+                              >
+                                <Pencil
+                                  width={16}
+                                  height={16}
+                                  className="dark:text-slate-400 text-slate-500"
+                                />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Edit Experience</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     )}
                   </div>

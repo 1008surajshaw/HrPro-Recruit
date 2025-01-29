@@ -1,4 +1,3 @@
-
 import {
   Sheet,
   SheetContent,
@@ -19,6 +18,7 @@ interface SheetWrapperForMessageProps {
   name: string;
   lastMessage: Date | undefined;
   otherUserId: string | undefined;
+  description:string;
 }
 
 const SheetWrapperForMessage: React.FC<SheetWrapperForMessageProps> = ({
@@ -29,7 +29,8 @@ const SheetWrapperForMessage: React.FC<SheetWrapperForMessageProps> = ({
   name,
   title,
   lastMessage,
-  otherUserId
+  otherUserId,
+  description
 }) => {
   const initials = name
     .split(' ')
@@ -38,7 +39,6 @@ const SheetWrapperForMessage: React.FC<SheetWrapperForMessageProps> = ({
     .toUpperCase()
     .slice(0, 2);
 
-  
 
   return (
     <Sheet open={isOpen} onOpenChange={handleClose}>

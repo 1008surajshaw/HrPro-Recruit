@@ -11,7 +11,7 @@ const APP_PATHS = {
   RECRUITERS_JOBS:'/managejob',
   MANAGE_RECRUITERS: '/manage/recruiters',
   MANAGE_JOBS: '/manage/jobs',
-  CONTACT_US: 'mailto:hrproams@gmail.com',
+  CONTACT_US: '/contact',
   TESTIMONIALS: '#testimonials',
   FAQS: '#faq',
   VERIFY_EMAIL: '/verify-email',

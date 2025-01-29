@@ -110,7 +110,7 @@ const EducationForm = ({
               name="instituteName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel> Project Name </FormLabel>
+                  <FormLabel> College </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter Institute Name" {...field} />
                   </FormControl>
@@ -122,7 +122,7 @@ const EducationForm = ({
               name="degree"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Employment Type</FormLabel>
+                  <FormLabel>Qualification</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -149,7 +149,7 @@ const EducationForm = ({
               name="fieldOfStudy"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Employment Type</FormLabel>
+                  <FormLabel>Course</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -235,7 +235,10 @@ const EducationForm = ({
                       max="4"
                       step="0.1" 
                       placeholder="Enter Grade"
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)} 
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        field.onChange(value === "" ? "" : parseFloat(value));
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -253,7 +256,7 @@ const EducationForm = ({
                     <Textarea {...field} />
                   </FormControl>
                   <FormDescription>
-                    Describe your role and responsibilities (50-255 characters)
+                     Detail your education journey: degrees, accomplishments, skills gained. Share your academic and learning experiences to stand out (50-255 characters)
                   </FormDescription>
                 </FormItem>
               )}

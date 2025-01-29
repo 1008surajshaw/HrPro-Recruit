@@ -11,6 +11,12 @@ import { useSession } from "next-auth/react";
 import { UserType } from "@/types/user.types";
 import ProfileSocials from "./ProfileSocials";
 import { ProfileShareDialog } from "./ProfileShare";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const ProfileHeroSection = ({ userdetails }: { userdetails: UserType }) => {
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
@@ -48,23 +54,52 @@ const ProfileHeroSection = ({ userdetails }: { userdetails: UserType }) => {
           <div className="w-full flex justify-end gap-2 h-10">
             {status === "authenticated" && data.user.id === userdetails.id && (
               <>
-                <Button
-                  variant={"outline"}
-                  className="px-3 py-2 rounded-sm"
-                  onClick={handleOpen}
-                >
-                  <Pencil height={16} width={16} />
-                </Button>
-                <Button
-                  onClick={() => setIsAccountOpen(true)}
-                  variant={"outline"}
-                  className="px-3 py-2 rounded-sm"
-                >
-                  <Settings height={16} width={16} />
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                    <Button
+                      variant={"outline"}
+                      className="px-3 py-2 rounded-sm"
+                      onClick={handleOpen}
+                    >
+                      <Pencil height={16} width={16} />
+                    </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Update your Profile</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                    <Button
+                      onClick={() => setIsAccountOpen(true)}
+                      variant={"outline"}
+                      className="px-3 py-2 rounded-sm"
+                    >
+                      <Settings height={16} width={16} />
+                    </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Manage Account </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </>
             )}
-            <ProfileShareDialog />
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <ProfileShareDialog />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p> Share Profile Info</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <div>
             <h2 className="text-4xl font-bold">

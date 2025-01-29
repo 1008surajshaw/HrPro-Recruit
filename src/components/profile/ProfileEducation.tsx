@@ -1,14 +1,20 @@
-'use client';
-import { Circle, BookOpenCheck, Pencil, Plus } from 'lucide-react';
-import React, { useState } from 'react';
-import { Button } from '../ui/button';
-import SheetWrapper from './sheets/SheetWrapper';
-import { SHEETS } from '@/lib/constant/profile.constant';
-import EducationForm from './forms/EducationForm';
-import { EducationType } from '@/types/user.types';
-import { format } from 'date-fns';
-import { EducationDeleteDialog } from './EducationDeleteDialog';
-import ProfileEmptyContainers from './emptycontainers/ProfileEmptyContainers';
+"use client";
+import { Circle, BookOpenCheck, Pencil, Plus } from "lucide-react";
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import SheetWrapper from "./sheets/SheetWrapper";
+import { SHEETS } from "@/lib/constant/profile.constant";
+import EducationForm from "./forms/EducationForm";
+import { EducationType } from "@/types/user.types";
+import { format } from "date-fns";
+import { EducationDeleteDialog } from "./EducationDeleteDialog";
+import ProfileEmptyContainers from "./emptycontainers/ProfileEmptyContainers";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const ProfileEducation = ({
   isOwner,
@@ -29,11 +35,11 @@ const ProfileEducation = ({
     setIsSheetOpen(true);
   };
   const title = selectedEducation
-    ? SHEETS.education.title.replace('Add', 'Edit')
+    ? SHEETS.education.title.replace("Add", "Edit")
     : SHEETS.education.title;
   function formatDateRange(startDate: Date, endDate: Date | null): string {
-    const startFormatted = format(startDate, 'MMMM yy');
-    const endFormatted = endDate ? format(endDate, 'MMMM yy') : 'Present';
+    const startFormatted = format(startDate, "MMMM yy");
+    const endFormatted = endDate ? format(endDate, "MMMM yy") : "Present";
 
     return `${startFormatted} - ${endFormatted}`;
   }
@@ -47,7 +53,7 @@ const ProfileEducation = ({
         <h3 className="font-bold text-2xl">Education</h3>
         {isOwner && (
           <Button
-            variant={'outline'}
+            variant={"outline"}
             className="px-3 py-2 rounded-sm text-slate-500 dark:text-slate-400 flex gap-2"
             onClick={handleOpen}
           >
@@ -61,12 +67,12 @@ const ProfileEducation = ({
           buttonText="Add your education"
           handleClick={handleOpen}
           title={
-            isOwner ? 'You haven’t added education yet' : 'No Education added.'
+            isOwner ? "You haven’t added education yet" : "No Education added."
           }
           description={
             isOwner
-              ? 'Provide your education background to complete your profile.'
-              : ''
+              ? "Provide your education background to complete your profile."
+              : ""
           }
           Icon={BookOpenCheck}
         />
@@ -86,7 +92,7 @@ const ProfileEducation = ({
                       <h2 className="dark:text-slate-50 text-[#020817] text-xl font-bold ">
                         {education.degree}
                       </h2>
-                      <p className='flex gap-[4px] items-center text-sm font-medium text-slate-500 dark:text-slate-400'>
+                      <p className="flex gap-[4px] items-center text-sm font-medium text-slate-500 dark:text-slate-400">
                         Grade : {education.grade} cgpa
                       </p>
                       <p className="flex gap-[4px] items-center text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -94,7 +100,7 @@ const ProfileEducation = ({
                         <Circle width={5} height={5} fill="currentColor" />
                         {education.fieldOfStudy}
                       </p>
-                      <p className='flex gap-[4px] items-center text-sm font-medium text-slate-500 dark:text-slate-400'>
+                      <p className="flex gap-[4px] items-center text-sm font-medium text-slate-500 dark:text-slate-400">
                         {education.description}
                       </p>
                       <div className="px-3 py-1 bg-slate-500 bg-opacity-10 text-slate-500 dark:text-slate-400 rounded-[8px] text-sm w-fit">
@@ -106,17 +112,34 @@ const ProfileEducation = ({
                     </div>
                     {isOwner && (
                       <div className="flex gap-3 items-center w-fit">
-                        <EducationDeleteDialog educationId={education.id} />
-                        <Button
-                          className="bg-transparent p-0 b-0 hover:bg-transparent"
-                          onClick={() => handleEditClick(education)}
-                        >
-                          <Pencil
-                            width={16}
-                            height={16}
-                            className="dark:text-slate-400 text-slate-500"
-                          />
-                        </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                            <EducationDeleteDialog educationId={education.id} />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Delete Education</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                className="bg-transparent p-0 border-0 hover:bg-transparent"
+                                onClick={() => handleEditClick(education)}
+                              >
+                                <Pencil
+                                  width={16}
+                                  height={16}
+                                  className="dark:text-slate-400 text-slate-500"
+                                />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Edit Education Detail</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     )}
                   </div>

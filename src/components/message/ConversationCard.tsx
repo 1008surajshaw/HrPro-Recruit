@@ -34,10 +34,14 @@ const ConversationCard: React.FC<ConversationCardProps> = ({ conversation, role 
     .toUpperCase()
     .slice(0, 2)
 
-  const handleClose = () => setIsSheetOpen(false)
-  const handleOpen = () => setIsSheetOpen(true)
-
+  const handleClose = () => {
+    setIsSheetOpen(false)
+  };
+  const handleOpen = () => {
+    setIsSheetOpen(true)
+  };
   return (
+    <>
     <Card className="w-full hover:bg-accent/50 transition-colors cursor-pointer py-6" onClick={handleOpen} >
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
@@ -75,6 +79,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({ conversation, role 
           </div>
         </div>
       </CardContent>
+    </Card>
       <SheetWrapperForMessage
         isOpen={isSheetOpen}
         handleClose={handleClose}
@@ -83,10 +88,11 @@ const ConversationCard: React.FC<ConversationCardProps> = ({ conversation, role 
         name={displayName}
         lastMessage={lastMessage?.createdAt}
         otherUserId={otherUsers?.id}
+        description=''
       >
         <UserCompleteConversation conversationId={conversation.id} isHR={isHR} otherUsers={otherUsers} jobApplication={jobApplication} />
       </SheetWrapperForMessage>
-    </Card>
+    </>
   )
 }
 
