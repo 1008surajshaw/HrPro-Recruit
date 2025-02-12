@@ -5,6 +5,10 @@ import { authOptions } from '@/lib/authOptions';
 import { getUserDetailsWithId } from '@/actions/user.profile.actions';
 import { redirect } from 'next/navigation';
 import SubscriptionExpirationModal from '@/components/jobpost/SubscriptionExpirationModal';
+import Image from 'next/image';
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Home, UserCircle } from "lucide-react"
 
 
 const page = async() => {
@@ -29,9 +33,27 @@ const page = async() => {
 
   if(!userDetails?.company){
     return (
-      <div className='h-screen w-full justify-center items-center border-2 dark:text-white '>
-          please complete your company details first
+      <div className="min-h-screen w-full flex flex-col justify-center items-center bg-background text-foreground p-4">
+      <div className="text-center max-w-2xl">
+       
+        <h1 className="text-3xl font-bold mb-4">Company Profile Incomplete</h1>
+        <p className="text-xl mb-8">
+          Please complete your company details to access the full features of our platform.
+        </p>
+        <div className="flex justify-center space-x-4">
+          <Button asChild className="flex items-center">
+            <Link href="/">
+              <Home className="mr-2 h-4 w-4" /> Home
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="flex items-center">
+            <Link href="/profile">
+              <UserCircle className="mr-2 h-4 w-4" /> Complete Profile
+            </Link>
+          </Button>
+        </div>
       </div>
+    </div>
     )
   }
 

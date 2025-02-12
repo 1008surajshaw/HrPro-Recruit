@@ -72,16 +72,6 @@ export default function Testimonials() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-6 grid-cols-2 items-center gap-1 md:mt-0 mt-4 dark:bg-gray-900 my-8">
-              {trustedCompanies.map((company, i) => (
-                <Image
-                  key={i}
-                  className="mx-4 md:w-28 w-24 h-20 md:h-24"
-                  src={company.icon}
-                  alt={`${company.name}-icon`}
-                />
-              ))}
-        </div>
     </div>
   )
 }
