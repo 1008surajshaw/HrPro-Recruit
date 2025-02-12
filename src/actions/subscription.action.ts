@@ -176,3 +176,33 @@ export const getCurrentUserPlan = async (): Promise<UserSubscription | { message
   }
 }
 
+export const HrWithoutSubscription = async() =>{
+  try{
+    const usersWithoutSubscription = await prisma.user.findMany({
+      where: {
+        AND: [
+          { role: "HR" },
+          {
+            OR: [{ subscriptionTierId: null }, { subscriptionEndDate: { lt: new Date() } }],
+          },
+        ],
+      },
+      select: {
+        email: true,
+        
+
+      },
+    })
+
+    const emails = usersWithoutSubscription.map((user) => user.email)
+
+
+  }catch(error){
+    console.error("Error fetching users without subscription:", error)
+  }
+} 
+
+
+
+
+

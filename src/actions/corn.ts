@@ -49,3 +49,15 @@ export const scheduleDailyJobNotifications = () => {
 
   return task;
 };
+
+
+export const scheduleDailySubscriptionNotification = () =>{
+
+  const task = cron.schedule('0 0 * * *', async () => {
+    try{
+      
+    }catch(error){
+
+    }
+  })
+}
