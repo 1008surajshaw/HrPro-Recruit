@@ -2,41 +2,37 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
+import Link from "next/link";
+
+import povImage from "../../../../public/Humaaans2.png";
+
 
 export default function LandingPage() {
-  const router = useRouter()
 
   return (
-    <div className=" bg-red-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <section className="px-4 py-12 md:py-12 lg:py-32 mx-auto max-w-screen-xl">
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
-          <div className="space-y-6 flex-1 text-center lg:text-left">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-              <span className="text-red-600 dark:text-red-500">19,670 Jobs</span> for you
-            </h1>
-            <p className="max-w-[600px] text-gray-700 dark:text-gray-300 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto lg:mx-0">
-              Find your dream job from our vast selection of opportunities. We connect talented professionals with top companies across various industries.
-            </p>
-            <div>
-              <Button size="lg" className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white" onClick={()=>router.push('/jobs')}>
-                Explore Now
-              </Button>
-            </div>
-          </div>
-          <div className="flex-1 w-full max-w-xl">
-            <Image
-              src="/landingPage/landingPage.png"
-              alt="Job search illustration"
-              width={500}
-              height={500}
-              className="w-full h-auto object-cover rounded-lg shadow-xl"
-              priority
-            />
-          </div>
-        </div>
-      </section>
+    <div className="w-full flex h-screen">
+    <div className="w-1/2 grid gap-4  pt-24">
+      <h1
+        className={`font-satoshi text-center font-medium text-[5rem] leading-[4.5rem] tracking-normal`}
+      >
+        Job or Employee <br /> we search both <br /> for you!{" "}
+      </h1>
+      <p className="text-textLight font-light text-[18px] text-center -mt-5 px-12">
+        Our portal serves as a dynamic hub, catering to both employers seeking
+        talented candidates and individuals in pursuit of their ideal job
+        opportunities.
+      </p>
+      <Link
+        href="/signup"
+        className="px-8 py-2 h-12 rounded-md border border-red-600 w-44 text-lg font-medium text-red-600 mx-auto hover:bg-primary hover:text-white "
+      >
+        Join now!
+      </Link>
     </div>
+    <div className="w-1/2">
+      <Image src={povImage} width={700} height={700} alt="Pov image" />
+    </div>
+  </div>
   )
 }

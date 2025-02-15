@@ -1,15 +1,37 @@
-'use client'
+'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import JobCard from '../searchjob/Jobcard';
-import {  JobType } from '@/types/jobs.types';
+import { JobType } from '@/types/jobs.types';
+import { useSession } from 'next-auth/react';
+import { hasUserAppliedForJob } from '@/actions/job.action';
 
 interface BookmarkedJobsProps {
   bookmarkedJobs: JobType[] | null;
 }
 
 const BookmarkedJobs: React.FC<BookmarkedJobsProps> = ({ bookmarkedJobs }) => {
+  const { data: session } = useSession();
+  const [appliedJobs, setAppliedJobs] = useState<{ [key: string]: boolean }>({});
+
+  useEffect(() => {
+    if (!session?.user || !bookmarkedJobs) return;
+
+    const fetchAppliedStatus = async () => {
+      const appliedStatus: { [key: string]: boolean } = {};
+
+      for (const job of bookmarkedJobs) {
+        const hasApplied = await hasUserAppliedForJob(job.id);
+        appliedStatus[job.id] = hasApplied;
+      }
+
+      setAppliedJobs(appliedStatus);
+    };
+
+    fetchAppliedStatus();
+  }, [session?.user, bookmarkedJobs]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -30,6 +52,7 @@ const BookmarkedJobs: React.FC<BookmarkedJobsProps> = ({ bookmarkedJobs }) => {
               key={job.id}
               job={job}
               isBookmarked={true}
+              isApplied={appliedJobs[job.id] || false}
             />
           ))}
         </div>
@@ -39,4 +62,3 @@ const BookmarkedJobs: React.FC<BookmarkedJobsProps> = ({ bookmarkedJobs }) => {
 };
 
 export default BookmarkedJobs;
-

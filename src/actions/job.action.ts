@@ -786,6 +786,71 @@ export async function GetUserBookmarksId() {
   }
 }
 
+export async function GetAppliedJobById() {
+  try {
+    const auth = await getServerSession(authOptions);
+
+    if (!auth || !auth?.user?.id)
+      throw new ErrorHandler('Not Authrised', 'UNAUTHORIZED');
+
+    const userId = auth.user.id;
+
+    const getUserAppliedJob = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+
+      select: {
+        jobApplied: {
+          select: {
+            jobId: true,
+     
+          },
+        },
+      },
+    });
+
+    if (!getUserAppliedJob) throw new Error('No applied Job found');
+
+    return {
+      status: 200,
+      message: 'Applied job fetched ',
+      data: getUserAppliedJob.jobApplied,
+    };
+  } catch (error) {
+    return {
+      status: 404,
+      message: (error as Error).message,
+      data: null,
+    };
+  }
+}
+
+
+
+export async function hasUserAppliedForJob(jobId: string): Promise<boolean> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.id) return false;
+
+    const userId = session.user.id;
+
+    const appliedJob = await prisma.jobApplication.findFirst({
+      where: {
+        userId: userId,
+        jobId: jobId,
+      },
+      select: { id: true },
+    });
+
+    return !!appliedJob; 
+  } catch (error) {
+    console.error("Error checking applied job:", error);
+    return false;
+  }
+}
+
+
 
 export async function submitJobApplication(formData: FormData,jobId:string ,role:string , company:string) {
   try {

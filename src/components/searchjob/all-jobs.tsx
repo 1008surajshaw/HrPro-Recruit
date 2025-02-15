@@ -1,4 +1,4 @@
-import { getAllJobs, GetUserBookmarksId } from '@/actions/job.action';
+import { getAllJobs, GetAppliedJobById, GetUserBookmarksId } from '@/actions/job.action';
 import { DEFAULT_PAGE, JOBS_PER_PAGE } from '@/config/app.config';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { JobQuerySchemaType } from '@/lib/validators/jobs.validator';
@@ -16,12 +16,14 @@ type PaginatorProps = {
 };
 
 const AllJobs = async ({ searchParams }: PaginatorProps) => {
-  const [jobs, getUserBookmarks] = await Promise.all([
+  const [jobs, getUserBookmarks , getUserAppliedJob] = await Promise.all([
     await getAllJobs(searchParams),
     await GetUserBookmarksId(),
+    await GetAppliedJobById()
   ]);
-
+  
   const userbookmarkArr: { jobId: string }[] | null = getUserBookmarks.data;
+  const getAppliedJobArr: {jobId:string}[] | null = getUserAppliedJob.data;
 
   if (!jobs.status || !jobs.additional) {
     return <div>Error {jobs.message}</div>;
@@ -41,6 +43,9 @@ const AllJobs = async ({ searchParams }: PaginatorProps) => {
             key={index}
             isBookmarked={
               userbookmarkArr?.some((e) => e.jobId === job.id) || false
+            }
+            isApplied = {
+              getAppliedJobArr?.some((e) =>e.jobId==job.id) || false
             }
           />
         ))

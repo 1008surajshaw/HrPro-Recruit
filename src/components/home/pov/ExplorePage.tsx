@@ -1,11 +1,19 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { MoveDown } from "lucide-react"
 import { trustedCompanies } from '@/lib/constant/app.constant';
-import Image from "next/image";
 import { InfiniteScroll } from "../InfinityScroll";
+import { useSession } from "next-auth/react";
+
+// Define Role Enum
+enum Role {
+  USER = "USER",
+  ADMIN = "ADMIN",
+  HR = "HR"
+}
 
 const AnimatedStat = ({ end, label }: { end: number; label: string }) => {
   const [count, setCount] = useState(0)
@@ -58,6 +66,29 @@ const AnimatedStat = ({ end, label }: { end: number; label: string }) => {
 }
 
 export default function ExplorePage() {
+  const { data: session } = useSession()
+  const router = useRouter()
+
+  // Determine button text & navigation based on role
+  const userRole = session?.user.role as Role | undefined
+
+  let primaryButtonText = "Find a new job"
+  let primaryButtonRoute = "/jobs"
+  let secondaryButtonText = "Check your applications"
+  let secondaryButtonRoute = "/applied"
+
+  if (!session) {
+    primaryButtonText = "Find your next hire"
+    primaryButtonRoute = "/signup"
+    secondaryButtonText = "Find your next job"
+    secondaryButtonRoute = "/signin"
+  } else if (userRole === Role.HR) {
+    primaryButtonText = "Find your next hire"
+    primaryButtonRoute = "/create"
+    secondaryButtonText = "Check applications"
+    secondaryButtonRoute = "/managejob"
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground dark:bg-zinc-950 pt-10">
       {/* Hero Section */}
@@ -68,17 +99,19 @@ export default function ExplorePage() {
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Button
             size="lg"
+            onClick={() => router.push(primaryButtonRoute)}
             className="min-w-[200px] bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
-          >
-            Find your next hire
+          > 
+            {primaryButtonText}
           </Button>
           <Button
             variant="outline"
             size="lg"
+            onClick={() => router.push(secondaryButtonRoute)}
             className="min-w-[200px] border-red-600 text-red-600 hover:bg-red-50 hover:text-red-700
                        dark:border-red-500 dark:text-red-500 dark:hover:bg-red-950 dark:hover:text-red-400"
           >
-            Find your next job
+            {secondaryButtonText}
           </Button>
         </div>
 
@@ -98,4 +131,3 @@ export default function ExplorePage() {
     </div>
   )
 }
-

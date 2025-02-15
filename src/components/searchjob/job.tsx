@@ -26,9 +26,10 @@ const options = {
   target: '_blank',
 };
 
-export const Job = ({ job }: { job: JobType }) => {
+export const Job = ({ job , isApplied }: { job: JobType  , isApplied:Boolean}) => {
   const { data: session } = useSession();
-
+ 
+  const hasApplied = isApplied || false;
 
   return (
     <aside className="col-span-1 flex flex-col gap-6 lg:col-span-4">
@@ -126,13 +127,13 @@ export const Job = ({ job }: { job: JobType }) => {
             <DialogTrigger asChild>
               {
                 session?.user.role == "USER" &&
-              <Button
-                variant="default"
-                className="justify-self-start px-6 dark:text-white py-2 w-fit h-fit"
-                disabled={job.expired}
-              >
-                {job.expired ? 'Position Filled' : 'Apply for Job'}
-              </Button>
+                <Button
+                  variant="default"
+                  className="justify-self-start px-6 dark:text-white py-2 w-fit h-fit"
+                  disabled={job.expired }
+                >
+                  {job.expired ? 'Position Filled' : hasApplied ? 'Applied Already' : 'Apply for Job'}
+                </Button>
               }
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
@@ -157,7 +158,7 @@ export const Job = ({ job }: { job: JobType }) => {
       </section>
 
       {/* Job description */}
-      <section className="border-2 bg-[#F1F5F9] dark:bg-[#0F172A] h-auto max-h-[20rem] overflow-y-auto p-6 rounded-xl">
+      <section className="border-2 bg-[#F1F5F9] dark:bg-[#0F172A] h-max  overflow-y-auto p-6 rounded-xl">
         <h2 className="font-extrabold px-4 py-1 w-fit text-white bg-red-600 dark:bg-red-700 rounded-lg text-xl">
           Job Description
         </h2>
@@ -171,7 +172,7 @@ export const Job = ({ job }: { job: JobType }) => {
 
       {/* Responsibilities section */}
       {job.responsibilities.length > 0 && (
-        <section className="border-2 bg-[#F1F5F9] dark:bg-[#0F172A] h-auto max-h-[15rem] overflow-y-auto p-6 rounded-xl">
+        <section className="border-2 bg-[#F1F5F9] dark:bg-[#0F172A] h-max  overflow-y-auto p-6 rounded-xl">
           <h2 className="font-extrabold px-4 py-1 w-fit text-white bg-red-600 dark:bg-red-700 rounded-lg text-xl">
             Key Responsibilities
           </h2>
@@ -186,7 +187,7 @@ export const Job = ({ job }: { job: JobType }) => {
       )}
 
       {/* About company */}
-      <section className="border-2 bg-[#F1F5F9] dark:bg-[#0F172A]  max-h-[15rem]  p-6 rounded-xl">
+      <section className="border-2 bg-[#F1F5F9] dark:bg-[#0F172A]  h-max  p-6 rounded-xl">
         <h2 className="font-extrabold px-4 py-1 w-fit text-white bg-red-600 dark:bg-red-700 rounded-lg text-xl">
           About {job.company.companyName}
         </h2>

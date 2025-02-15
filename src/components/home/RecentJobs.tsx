@@ -23,6 +23,7 @@ export default async function RecentJobs() {
           isBookmarked={
             userbookmarkArr?.some((e) => e.jobId === job.id) || false
           }
+          isApplied={false}
         />
       ))}
     </div>
